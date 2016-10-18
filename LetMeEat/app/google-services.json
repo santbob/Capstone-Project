@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "862592479778",
+    "firebase_url": "https://letmeeat-abfb3.firebaseio.com",
+    "project_id": "letmeeat-abfb3",
+    "storage_bucket": "letmeeat-abfb3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862592479778:android:134380a304f1c76d",
+        "android_client_info": {
+          "package_name": "com.letmeeat.letmeeat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "862592479778-ckr0evrhc8cjmbg66uvcobh8ce1umrf2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmem3ET-K5FC51esBESdgrF1v3KbT2lC8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
