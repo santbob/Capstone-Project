@@ -20,4 +20,5 @@
     <string name="link_icon">Website Icon</string>
     <string name="thumb_down_icon">Thumb down Icon, touch if you dont like this recommendation</string>
     <string name="thumb_up_icon">Thumb up Icon, touch if you like this recommendation</string>
+    <string name="photos">Photos</string>
 </resources>
