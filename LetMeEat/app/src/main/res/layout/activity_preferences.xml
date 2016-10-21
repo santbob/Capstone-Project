@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/label_cusine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/cuisine_lookup"
+            android:text="@string/lookup_cuisine" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <AutoCompleteTextView
+                android:id="@+id/cuisine_lookup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/plus_icon"
+                android:src="@drawable/plus_box" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:labelFor="@+id/minimum_ratings"
+            android:text="@string/minimum_ratings" />
+
+        <EditText
+            android:id="@+id/minimum_ratings"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:inputType="numberDecimal"
+            android:text="@string/default_minimum_ratings" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/save_preferences"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:text="@string/save_preferences"
+        android:textColor="@color/white" />
+</RelativeLayout>
