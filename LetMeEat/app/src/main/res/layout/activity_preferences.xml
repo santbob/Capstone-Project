@@ -21,12 +21,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:orientation="vertical"
         android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -34,7 +32,9 @@
             android:id="@+id/min_rating_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/medium_pad"
+            android:paddingStart="@dimen/medium_pad">
 
             <TextView
                 android:layout_width="0dp"
@@ -54,9 +54,11 @@
         <LinearLayout
             android:id="@+id/cuisine_section"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/min_rating_section"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/medium_pad"
+            android:paddingStart="@dimen/medium_pad">
 
             <TextView
                 android:layout_width="match_parent"
@@ -64,24 +66,11 @@
                 android:labelFor="@+id/pref_cuisine_lookup"
                 android:text="@string/lookup_cuisine" />
 
-            <LinearLayout
+            <AutoCompleteTextView
+                android:id="@+id/pref_cuisine_lookup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <AutoCompleteTextView
-                    android:id="@+id/pref_cuisine_lookup"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <ImageView
-                    android:id="@+id/pref_add_cuisine"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/plus_icon"
-                    android:src="@drawable/plus_box" />
-            </LinearLayout>
+                android:maxLines="1" />
 
             <LinearLayout
                 android:id="@+id/selected_cuisines"
@@ -96,10 +85,9 @@
             android:id="@+id/pref_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="@color/colorPrimary"
             android:text="@string/save_preferences"
             android:textColor="@color/white" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

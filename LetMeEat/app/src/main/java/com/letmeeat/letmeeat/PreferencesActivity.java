@@ -65,6 +65,7 @@ public class PreferencesActivity extends AppCompatActivity implements TagView.Ta
             }
         });
         autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setThreshold(0);
 
         selectedCuisinesLayout = (LinearLayout) findViewById(R.id.selected_cuisines);
 
