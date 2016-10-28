@@ -191,7 +191,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        if (id == R.id.nav_preferences) {
+            Intent intent = new Intent(this, PreferencesActivity.class);
+            startActivity(intent);
+        }
 //        if (id == R.id.nav_preferences) {
 //            // Handle the camera action
 //        } else if (id == R.id.nav_gallery) {
