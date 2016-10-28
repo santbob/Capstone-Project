@@ -10,8 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.letmeeat.letmeeat.models.Preferences;
@@ -37,7 +37,7 @@ public class PreferencesActivity extends AppCompatActivity implements TagView.Ta
     private List<String> cuisinePref = new ArrayList<String>();
     private Preferences preferencesModel;
     private EditText minRatingsTextView;
-    private LinearLayout selectedCuisinesLayout;
+    private FlexboxLayout selectedCuisinesLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public class PreferencesActivity extends AppCompatActivity implements TagView.Ta
         autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.setThreshold(0);
 
-        selectedCuisinesLayout = (LinearLayout) findViewById(R.id.selected_cuisines);
+        selectedCuisinesLayout = (FlexboxLayout) findViewById(R.id.selected_cuisines);
 
         Button savePreferences = (Button) findViewById(R.id.pref_save);
         savePreferences.setOnClickListener(new View.OnClickListener() {

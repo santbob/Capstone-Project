@@ -45,9 +45,11 @@
 
             <EditText
                 android:id="@+id/pref_minimum_ratings"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
                 android:inputType="numberDecimal"
+                android:backgroundTint="@color/colorPrimary"
                 android:text="@string/default_minimum_ratings" />
         </LinearLayout>
 
@@ -70,15 +72,18 @@
                 android:id="@+id/pref_cuisine_lookup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorPrimary"
                 android:maxLines="1" />
 
-            <LinearLayout
+            <com.google.android.flexbox.FlexboxLayout
                 android:id="@+id/selected_cuisines"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                app:justifyContent="center"
+                app:alignContent="flex_start"
+                app:alignItems="flex_start"
+                app:flexWrap="wrap" />
 
-            </LinearLayout>
         </LinearLayout>
 
         <Button
