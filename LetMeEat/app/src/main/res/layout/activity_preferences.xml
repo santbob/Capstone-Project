@@ -22,6 +22,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
+        android:id="@+id/pref_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -47,9 +48,9 @@
                 android:id="@+id/pref_minimum_ratings"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorPrimary"
                 android:gravity="center"
                 android:inputType="numberDecimal"
-                android:backgroundTint="@color/colorPrimary"
                 android:text="@string/default_minimum_ratings" />
         </LinearLayout>
 
@@ -79,10 +80,10 @@
                 android:id="@+id/selected_cuisines"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:justifyContent="center"
                 app:alignContent="flex_start"
                 app:alignItems="flex_start"
-                app:flexWrap="wrap" />
+                app:flexWrap="wrap"
+                app:justifyContent="center" />
 
         </LinearLayout>
 

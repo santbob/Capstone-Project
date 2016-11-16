@@ -2,8 +2,8 @@ package com.letmeeat.letmeeat;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,8 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.letmeeat.letmeeat.models.Preferences;
 import com.letmeeat.letmeeat.views.TagView;
 import com.squareup.moshi.JsonAdapter;
@@ -27,7 +30,9 @@ import java.util.List;
  * Recommendations in LetMeEat are based on the Preferences set in this activity.
  */
 
-public class PreferencesActivity extends AppCompatActivity implements TagView.TagViewListener {
+public class PreferencesActivity extends BaseActivity implements TagView.TagViewListener {
+
+    private final String TAG = getClass().getSimpleName();
 
     private final String[] cuisines = new String[]{
             "Meditranean", "Italian", "Indian", "Chineese", "American"
@@ -36,7 +41,10 @@ public class PreferencesActivity extends AppCompatActivity implements TagView.Ta
     private DatabaseReference preferencesDBRef;
     private List<String> cuisinePref = new ArrayList<String>();
     private Preferences preferencesModel;
+
+
     private EditText minRatingsTextView;
+    private AutoCompleteTextView autoCompleteTextView;
     private FlexboxLayout selectedCuisinesLayout;
 
     @Override
@@ -56,7 +64,7 @@ public class PreferencesActivity extends AppCompatActivity implements TagView.Ta
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, cuisines);
-        final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.pref_cuisine_lookup);
+        autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.pref_cuisine_lookup);
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View arg1, int pos, long id) {
@@ -68,6 +76,8 @@ public class PreferencesActivity extends AppCompatActivity implements TagView.Ta
         autoCompleteTextView.setThreshold(0);
 
         selectedCuisinesLayout = (FlexboxLayout) findViewById(R.id.selected_cuisines);
+
+        readPreferences();
 
         Button savePreferences = (Button) findViewById(R.id.pref_save);
         savePreferences.setOnClickListener(new View.OnClickListener() {
@@ -115,6 +125,50 @@ public class PreferencesActivity extends AppCompatActivity implements TagView.Ta
             cuisinePref.remove(index);
             selectedCuisinesLayout.removeView(view);
         }
+    }
+
+    private void readPreferences() {
+        showProgressDialog(null, null);
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                try {
+                    String prefJson = (String) dataSnapshot.getValue();
+                    Moshi moshi = new Moshi.Builder().build();
+                    JsonAdapter<Preferences> jsonAdapter = moshi.adapter(Preferences.class);
+
+                    if (prefJson != null) {
+                        preferencesModel = jsonAdapter.fromJson(prefJson);
+                        if (preferencesModel != null) {
+                            if (preferencesModel.getPreferedCuisines() != null) {
+                                for (String cuisine : preferencesModel.getPreferedCuisines()) {
+                                    addCuisine2Preference(cuisine);
+                                }
+                            }
+                            if (preferencesModel.getMinimumRatings() > 0) {
+                                minRatingsTextView.setText(Float.toString(preferencesModel.getMinimumRatings()));
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.d(TAG, "Exception occcured " + e.toString());
+                } finally {
+                    minRatingsTextView.setVisibility(View.VISIBLE);
+                    autoCompleteTextView.setVisibility(View.VISIBLE);
+                    selectedCuisinesLayout.setVisibility(View.VISIBLE);
+                    hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        preferencesDBRef.addValueEventListener(postListener);
     }
 }
 

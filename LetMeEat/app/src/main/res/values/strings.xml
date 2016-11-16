@@ -27,4 +27,6 @@
     <string name="minimum_ratings">Minimum Ratings</string>
     <string name="default_minimum_ratings">3.5</string>
     <string name="save_preferences">Save Preferences</string>
+    <string name="processing">Processing</string>
+    <string name="please_wait">Please wait</string>
 </resources>
