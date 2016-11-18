@@ -8,6 +8,7 @@ import com.letmeeat.letmeeat.models.Recommendation;
 
 /**
  * Created by santhosh on 18/10/2016.
+ * Base Custom View for the Card.
  */
 
 public class CardBaseView extends LinearLayout {
@@ -39,5 +40,13 @@ public class CardBaseView extends LinearLayout {
         super(context);
         this.recommendation = recommendation;
         this.listener = listener;
+    }
+
+    protected Recommendation getRecommendation(){
+        return recommendation;
+    }
+
+    protected CardInteractionListener getCardInteractionListener(){
+        return listener;
     }
 }

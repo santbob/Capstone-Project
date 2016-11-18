@@ -5,21 +5,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -28,15 +28,29 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.letmeeat.letmeeat.adapters.CardViewPagerAdapter;
+import com.letmeeat.letmeeat.helpers.Utils;
+import com.letmeeat.letmeeat.models.Recommendation;
+import com.letmeeat.letmeeat.service.ApiService;
+import com.letmeeat.letmeeat.views.CardFlipper;
 import com.letmeeat.letmeeat.views.CardViewPager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = getClass().getSimpleName();
 
-    private CardViewPager mCardViewPager;
-    private CardViewPagerAdapter mCardViewPagerAdapter;
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+    private CardViewPager cardViewPager;
+    private CardViewPagerAdapter cardViewPagerAdapter;
+    private LinearLayout noRecommendations;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener authListener;
 
 
     //FB login callbackManager
@@ -60,8 +74,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        firebaseAuth = FirebaseAuth.getInstance();
+        authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -76,29 +90,58 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         };
 
-        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.login_button);
-        fbLoginButton.setReadPermissions("email", "public_profile");
+//        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.login_button);
+//        fbLoginButton.setReadPermissions("email", "public_profile");
+//
+//        // Callback registration
+//        fbLoginButton.registerCallback(fbCallbackManager, new FacebookCallback<LoginResult>() {
+//                    @Override
+//                    public void onSuccess(LoginResult loginResult) {
+//                        handleFacebookAccessToken(loginResult.getAccessToken());
+//                    }
+//
+//                    @Override
+//                    public void onCancel() {
+//                        Log.d(TAG, "fb cancel callback");
+//                    }
+//
+//                    @Override
+//                    public void onError(FacebookException exception) {
+//                        // App code
+//                        Log.d(TAG, "fb exception callback");
+//                    }
+//                }
+//
+//        );
+        cardViewPager = (CardViewPager) findViewById(R.id.view_pager);
+        cardViewPagerAdapter = new CardViewPagerAdapter();
+        cardViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        // Callback registration
-        fbLoginButton.registerCallback(fbCallbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        handleFacebookAccessToken(loginResult.getAccessToken());
-                    }
+            }
 
-                    @Override
-                    public void onCancel() {
-                        Log.d(TAG, "fb cancel callback");
-                    }
+            @Override
+            public void onPageSelected(int position) {
 
-                    @Override
-                    public void onError(FacebookException exception) {
-                        // App code
-                        Log.d(TAG, "fb exception callback");
-                    }
-                }
+            }
 
-        );
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        //for previous and next page
+        cardViewPager.setClipToPadding(false);
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        float multiplier = (float) ((metrics.density % 1) > 0 ? 20.0 * 0.7 : 0);
+        float dp = multiplier + 20;
+        int px = Utils.convertDipToPixel(getApplicationContext(), (int) dp);
+        cardViewPager.setPadding(px, 0, px, 0);
+        cardViewPager.setAdapter(cardViewPagerAdapter);
+
+        noRecommendations = (LinearLayout) findViewById(R.id.no_recommendations);
 
         init();
     }
@@ -107,14 +150,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onStart() {
         super.onStart();
-        mFirebaseAuth.addAuthStateListener(mAuthListener);
+        firebaseAuth.addAuthStateListener(authListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mFirebaseAuth.removeAuthStateListener(mAuthListener);
+        if (authListener != null) {
+            firebaseAuth.removeAuthStateListener(authListener);
         }
     }
 
@@ -122,7 +165,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mFirebaseAuth.signInWithCredential(credential)
+        firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -143,13 +186,42 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void init() {
-
-
+        getData();
     }
 
     private void getData() {
         //json is store in the url https://api.myjson.com/bins/4vp7g for testing
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.myjson.com/")
+                .addConverterFactory(MoshiConverterFactory.create())
+                .build();
 
+        ApiService service = retrofit.create(ApiService.class);
+        Call<List<Recommendation>> call = service.getRecommendations();
+
+        call.enqueue(new Callback<List<Recommendation>>() {
+            @Override
+            public void onResponse(Call<List<Recommendation>> call, Response<List<Recommendation>> response) {
+                List<CardFlipper> cardFlippers = new ArrayList<CardFlipper>();
+                if (response.body() != null && response.body().size() > 0) {
+                    for (Recommendation recommendation : response.body()) {
+                        CardFlipper cardContainer = new CardFlipper(MainActivity.this, recommendation);
+                        cardFlippers.add(cardContainer);
+                    }
+                    cardViewPager.setVisibility(View.VISIBLE);
+                    noRecommendations.setVisibility(View.GONE);
+                    cardViewPagerAdapter.updateViews(cardFlippers);
+                } else {
+                    cardViewPager.setVisibility(View.GONE);
+                    noRecommendations.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Recommendation>> call, Throwable t) {
+                Log.d(TAG, t.toString());
+            }
+        });
     }
 
 
@@ -182,6 +254,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         }
 
+        if (id == R.id.action_refresh) {
+            init();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -194,19 +269,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             Intent intent = new Intent(this, PreferencesActivity.class);
             startActivity(intent);
         }
-//        if (id == R.id.nav_preferences) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
