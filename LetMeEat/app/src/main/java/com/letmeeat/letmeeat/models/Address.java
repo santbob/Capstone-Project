@@ -1,11 +1,15 @@
 package com.letmeeat.letmeeat.models;
 
+import android.text.TextUtils;
+
 /**
  * Created by santhosh on 18/10/2016.
  * Model class which holds the physical address of the Restaurants/Establishments
  */
 
 public class Address {
+
+    private final String SPACE = " ";
     private String streetLine1;
     private String streetLine2;
     private String city;
@@ -59,5 +63,25 @@ public class Address {
 
     public void setLandmark(String landmark) {
         this.landmark = landmark;
+    }
+
+    public String getPrintableAddress(){
+        String address = "";
+        if(!TextUtils.isEmpty(streetLine1)){
+            address += streetLine1;
+        }
+        if(!TextUtils.isEmpty(streetLine2)){
+            address += SPACE + streetLine2;
+        }
+        if(!TextUtils.isEmpty(city)){
+            address += SPACE + city;
+        }
+        if(!TextUtils.isEmpty(state)){
+            address += SPACE + state;
+        }
+        if(!TextUtils.isEmpty(zip)){
+            address += SPACE + zip;
+        }
+        return address;
     }
 }

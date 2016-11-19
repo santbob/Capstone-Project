@@ -10,4 +10,6 @@
     <dimen name="small_pad">5dp</dimen>
     <dimen name="medium_pad">10dp</dimen>
     <dimen name="large_pad">16dp</dimen>
+    <dimen name="strip_height">40dp</dimen>
+    <dimen name="big_strip_height">80dp</dimen>
 </resources>

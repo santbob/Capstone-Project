@@ -17,7 +17,7 @@ public class Recommendation {
     private int endPrice;
     private String currency;
     private Address address;
-    private String phoneNumber;
+    private String phone;
     private String website;
     private List<String> photos;
 
@@ -85,12 +85,12 @@ public class Recommendation {
         this.address = address;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getWebsite() {

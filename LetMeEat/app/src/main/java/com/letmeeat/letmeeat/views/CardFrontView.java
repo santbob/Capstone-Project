@@ -1,6 +1,7 @@
 package com.letmeeat.letmeeat.views;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,15 +20,14 @@ public class CardFrontView extends CardBaseView {
 
     private TextView cuisineName;
     private TextView recommendationName;
-    private ImageView flipCard;
+
     private TextView reviewsCount;
     private TextView priceRange;
     private TextView address;
-    private TextView directions;
     private TextView phoneNumber;
     private TextView website;
-    private ImageView thumbDown;
-    private ImageView thumbUp;
+    private ImageView loveIt;
+
 
     public CardFrontView(Context context) {
         super(context);
@@ -56,29 +56,61 @@ public class CardFrontView extends CardBaseView {
         reviewsCount = (TextView) findViewById(R.id.reviews_count);
         priceRange = (TextView) findViewById(R.id.price_range);
         address = (TextView) findViewById(R.id.address);
-        directions = (TextView) findViewById(R.id.directions);
+        TextView directions = (TextView) findViewById(R.id.directions);
+        directions.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //open maps app
+            }
+        });
         phoneNumber = (TextView) findViewById(R.id.phone_number);
         website = (TextView) findViewById(R.id.website);
 
-        flipCard = (ImageView) findViewById(R.id.flip_card);
+        loveIt = (ImageView) findViewById(R.id.love_it);
+        loveIt.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!"1".equals(loveIt.getTag())) {
+                    loveIt.setTag("1");
+                    loveIt.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                } else {
+                    loveIt.setTag("0");
+                    loveIt.setColorFilter(ContextCompat.getColor(getContext(), R.color.white));
+                }
+            }
+        });
+        ImageView flipCard = (ImageView) findViewById(R.id.flip_card);
         flipCard.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 getCardInteractionListener().flip(false);
             }
         });
-        thumbDown = (ImageView) findViewById(R.id.thumb_down);
+        final ImageView thumbDown = (ImageView) findViewById(R.id.thumb_down);
         thumbDown.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 //vote down
+                if (!"1".equals(thumbDown.getTag())) {
+                    thumbDown.setTag("1");
+                    thumbDown.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                } else {
+                    thumbDown.setTag("0");
+                    thumbDown.setColorFilter(ContextCompat.getColor(getContext(), R.color.theme_200));
+                }
             }
         });
-        thumbUp = (ImageView) findViewById(R.id.thumb_up);
+        final ImageView thumbUp = (ImageView) findViewById(R.id.thumb_up);
         thumbUp.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //vote up
+                if (!"1".equals(thumbUp.getTag())) {
+                    thumbUp.setTag("1");
+                    thumbUp.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                } else {
+                    thumbUp.setTag("0");
+                    thumbUp.setColorFilter(ContextCompat.getColor(getContext(), R.color.theme_200));
+                }
             }
         });
 
@@ -90,8 +122,8 @@ public class CardFrontView extends CardBaseView {
         cuisineName.setText(recommendation.getCuisine());
         reviewsCount.setText(getContext().getString(R.string.reviews, recommendation.getReviewsCount()));
         priceRange.setText(getContext().getString(R.string.price_range, recommendation.getStartPrice(), recommendation.getEndPrice()));
-        address.setText(recommendation.getAddress().getStreetLine1());
-        phoneNumber.setText(recommendation.getPhoneNumber());
+        address.setText(recommendation.getAddress().getPrintableAddress());
+        phoneNumber.setText(recommendation.getPhone());
         website.setText(recommendation.getWebsite());
     }
 }
