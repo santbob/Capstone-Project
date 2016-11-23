@@ -63,7 +63,7 @@ public class CardViewPagerAdapter extends PagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return "PayRange";
+        return "LetMeEat";
     }
 
     @Override
