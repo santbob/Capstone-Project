@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 public class Address {
 
-    private final String SPACE = " ";
+    public static final String SPACE = " ";
     private String streetLine1;
     private String streetLine2;
     private String city;
@@ -65,23 +65,34 @@ public class Address {
         this.landmark = landmark;
     }
 
-    public String getPrintableAddress(){
+    public String getPrintableAddress(String separter) {
         String address = "";
-        if(!TextUtils.isEmpty(streetLine1)){
+        if (!TextUtils.isEmpty(streetLine1)) {
             address += streetLine1;
         }
-        if(!TextUtils.isEmpty(streetLine2)){
-            address += SPACE + streetLine2;
+        if (!TextUtils.isEmpty(streetLine2)) {
+            address += separter + streetLine2;
         }
-        if(!TextUtils.isEmpty(city)){
-            address += SPACE + city;
+        if (!TextUtils.isEmpty(city)) {
+            address += separter + city;
         }
-        if(!TextUtils.isEmpty(state)){
-            address += SPACE + state;
+        if (!TextUtils.isEmpty(state)) {
+            address += separter + state;
         }
-        if(!TextUtils.isEmpty(zip)){
+        if (!TextUtils.isEmpty(zip)) {
             address += SPACE + zip;
         }
         return address;
+    }
+
+    public String getCityState() {
+        String cityState = "";
+        if (!TextUtils.isEmpty(city)) {
+            cityState += city;
+        }
+        if (!TextUtils.isEmpty(state)) {
+            cityState += SPACE + state;
+        }
+        return cityState;
     }
 }

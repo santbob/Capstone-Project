@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/front_layout_new"
-    android:layout_width="300dp"
+    android:layout_width="310dp"
     android:layout_height="match_parent"
     android:layout_centerInParent="true"
     android:layout_marginBottom="20dp"
@@ -131,6 +131,13 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <WebView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </WebView>
+
     </LinearLayout>
 
     <LinearLayout
@@ -144,7 +151,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/medium_pad"
+            android:layout_marginBottom="@dimen/small_pad"
             android:drawablePadding="@dimen/small_pad"
             android:drawableStart="@drawable/map_marker" />
 
@@ -153,7 +160,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/medium_pad"
+            android:layout_marginBottom="@dimen/small_pad"
             android:drawablePadding="@dimen/small_pad"
             android:drawableStart="@drawable/directions"
             android:text="@string/get_directions"
@@ -164,7 +171,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/medium_pad"
+            android:layout_marginBottom="@dimen/small_pad"
             android:drawablePadding="@dimen/small_pad"
             android:drawableStart="@drawable/phone" />
 
@@ -173,7 +180,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/medium_pad"
+            android:layout_marginBottom="@dimen/small_pad"
             android:drawablePadding="@dimen/small_pad"
             android:drawableStart="@drawable/link_variant"
             android:textColor="@color/link_blue" />

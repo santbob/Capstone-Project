@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.letmeeat.letmeeat.BaseActivity;
 import com.letmeeat.letmeeat.models.Recommendation;
 
 /**
@@ -13,8 +14,8 @@ import com.letmeeat.letmeeat.models.Recommendation;
  * Custom CardView Class which acts as Container for Front and Back View of the Card.
  */
 
-public class CardFlipper extends RelativeLayout implements CardBaseView.CardInteractionListener{
-
+public class CardFlipper extends RelativeLayout implements CardBaseView.CardInteractionListener {
+    private BaseActivity activity;
     private CardFrontView frontView;
     private CardBackView backView;
 
@@ -36,8 +37,9 @@ public class CardFlipper extends RelativeLayout implements CardBaseView.CardInte
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public CardFlipper(Context context, Recommendation recommendation) {
-        super(context);
+    public CardFlipper(BaseActivity activity, Recommendation recommendation) {
+        super(activity);
+        this.activity = activity;
         this.recommendation = recommendation;
         init();
     }
@@ -46,10 +48,10 @@ public class CardFlipper extends RelativeLayout implements CardBaseView.CardInte
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         layoutParams.addRule(CENTER_VERTICAL);
 
-        frontView = new CardFrontView(getContext(), recommendation, this);
+        frontView = new CardFrontView(activity, recommendation, this);
         this.addView(frontView, layoutParams);
 
-        backView = new CardBackView(getContext(), recommendation, this);
+        backView = new CardBackView(activity, recommendation, this);
         backView.setVisibility(View.INVISIBLE);
         backView.setRotationY(-90);
         this.addView(backView, layoutParams);

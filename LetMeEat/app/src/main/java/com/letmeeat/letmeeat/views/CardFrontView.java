@@ -5,11 +5,17 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.letmeeat.letmeeat.BaseActivity;
 import com.letmeeat.letmeeat.R;
 import com.letmeeat.letmeeat.models.Recommendation;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 
 /**
  * Created by santhosh on 18/10/2016.
@@ -18,6 +24,7 @@ import com.letmeeat.letmeeat.models.Recommendation;
 
 public class CardFrontView extends CardBaseView {
 
+    private BaseActivity activity;
     private TextView cuisineName;
     private TextView recommendationName;
 
@@ -45,8 +52,9 @@ public class CardFrontView extends CardBaseView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public CardFrontView(Context context, Recommendation recommendation, CardBaseView.CardInteractionListener listener) {
+    public CardFrontView(BaseActivity context, Recommendation recommendation, CardBaseView.CardInteractionListener listener) {
         super(context, recommendation, listener);
+        this.activity = context;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.layout_card_front_view, this, true);
@@ -65,6 +73,9 @@ public class CardFrontView extends CardBaseView {
         });
         phoneNumber = (TextView) findViewById(R.id.phone_number);
         website = (TextView) findViewById(R.id.website);
+
+        WebView mapView = (WebView) findViewById(R.id.map_view);
+        mapView.loadUrl(activity.getString(R.string.static_map_url, urlEncode(recommendation.getAddress().getCityState()), urlEncode(recommendation.getAddress().getPrintableAddress(","))));
 
         loveIt = (ImageView) findViewById(R.id.love_it);
         loveIt.setOnClickListener(new OnClickListener() {
@@ -122,9 +133,17 @@ public class CardFrontView extends CardBaseView {
         cuisineName.setText(recommendation.getCuisine());
         reviewsCount.setText(getContext().getString(R.string.reviews, recommendation.getReviewsCount()));
         priceRange.setText(getContext().getString(R.string.price_range, recommendation.getStartPrice(), recommendation.getEndPrice()));
-        address.setText(recommendation.getAddress().getPrintableAddress());
+        address.setText(recommendation.getAddress().getPrintableAddress(com.letmeeat.letmeeat.models.Address.SPACE));
         phoneNumber.setText(recommendation.getPhone());
         website.setText(recommendation.getWebsite());
+    }
+
+    public String urlEncode(String str) {
+        try {
+            return URLEncoder.encode(str, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("failed to encode", e);
+        }
     }
 }
 
