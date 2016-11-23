@@ -2,6 +2,7 @@ package com.letmeeat.letmeeat.views;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.letmeeat.letmeeat.BaseActivity;
 import com.letmeeat.letmeeat.R;
+import com.letmeeat.letmeeat.helpers.IntentHelper;
 import com.letmeeat.letmeeat.models.Recommendation;
 
 import java.io.UnsupportedEncodingException;
@@ -24,6 +26,7 @@ import java.net.URLEncoder;
 
 public class CardFrontView extends CardBaseView {
 
+    private static final String COMMA = ",";
     private BaseActivity activity;
     private TextView cuisineName;
     private TextView recommendationName;
@@ -34,7 +37,7 @@ public class CardFrontView extends CardBaseView {
     private TextView phoneNumber;
     private TextView website;
     private ImageView loveIt;
-
+    private IntentHelper intentHelper;
 
     public CardFrontView(Context context) {
         super(context);
@@ -52,9 +55,11 @@ public class CardFrontView extends CardBaseView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public CardFrontView(BaseActivity context, Recommendation recommendation, CardBaseView.CardInteractionListener listener) {
+    public CardFrontView(BaseActivity context, final Recommendation recommendation, CardBaseView.CardInteractionListener listener) {
         super(context, recommendation, listener);
         this.activity = context;
+
+        intentHelper = new IntentHelper(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.layout_card_front_view, this, true);
@@ -68,14 +73,28 @@ public class CardFrontView extends CardBaseView {
         directions.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //open maps app
+                intentHelper.sendMapIntent(recommendation.getAddress().getPrintableAddress(COMMA));
             }
         });
         phoneNumber = (TextView) findViewById(R.id.phone_number);
         website = (TextView) findViewById(R.id.website);
+        website.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!TextUtils.isEmpty(recommendation.getWebsite())){
+                    intentHelper.sendWebIntent(recommendation.getWebsite());
+                }
+            }
+        });
 
         WebView mapView = (WebView) findViewById(R.id.map_view);
-        mapView.loadUrl(activity.getString(R.string.static_map_url, urlEncode(recommendation.getAddress().getCityState()), urlEncode(recommendation.getAddress().getPrintableAddress(","))));
+        mapView.loadUrl(activity.getString(R.string.static_map_url, urlEncode(recommendation.getAddress().getCityState()), urlEncode(recommendation.getAddress().getPrintableAddress(COMMA))));
+        mapView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intentHelper.sendMapIntent(recommendation.getAddress().getPrintableAddress(COMMA));
+            }
+        });
 
         loveIt = (ImageView) findViewById(R.id.love_it);
         loveIt.setOnClickListener(new OnClickListener() {
