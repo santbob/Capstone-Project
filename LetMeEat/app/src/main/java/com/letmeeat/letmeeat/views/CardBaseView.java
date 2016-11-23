@@ -11,10 +11,10 @@ import com.letmeeat.letmeeat.models.Recommendation;
  * Base Custom View for the Card.
  */
 
-public class CardBaseView extends LinearLayout {
+public abstract class CardBaseView extends LinearLayout {
 
     public interface CardInteractionListener {
-        void flip(boolean isBack);
+        void flip(boolean toBack);
     }
 
     private Recommendation recommendation;
@@ -36,17 +36,19 @@ public class CardBaseView extends LinearLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public CardBaseView(Context context, Recommendation recommendation, CardInteractionListener listener){
+    public CardBaseView(Context context, Recommendation recommendation, CardInteractionListener listener) {
         super(context);
         this.recommendation = recommendation;
         this.listener = listener;
     }
 
-    protected Recommendation getRecommendation(){
+    protected Recommendation getRecommendation() {
         return recommendation;
     }
 
-    protected CardInteractionListener getCardInteractionListener(){
+    protected CardInteractionListener getCardInteractionListener() {
         return listener;
     }
+
+    public abstract void updateUI(Recommendation recommendation);
 }

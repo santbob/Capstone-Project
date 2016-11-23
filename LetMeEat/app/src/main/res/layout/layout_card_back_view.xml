@@ -16,45 +16,44 @@
         android:elevation="4dp"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/title_sec_back"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/colorAccent">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/fav_reco"
-                android:src="@drawable/heart" />
-
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/recommendation_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:textColor="@color/white" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/photos"
                     android:textColor="@color/white" />
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/flip_card"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/small_pad"
                 android:contentDescription="@string/flip_the_card"
                 android:src="@drawable/rotate_3d" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 </RelativeLayout>

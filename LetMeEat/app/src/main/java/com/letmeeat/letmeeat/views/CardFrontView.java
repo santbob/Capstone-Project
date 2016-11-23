@@ -113,7 +113,7 @@ public class CardFrontView extends CardBaseView {
         flipCard.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCardInteractionListener().flip(false);
+                getCardInteractionListener().flip(true);
             }
         });
         final ImageView thumbDown = (ImageView) findViewById(R.id.thumb_down);
@@ -147,6 +147,7 @@ public class CardFrontView extends CardBaseView {
         updateUI(recommendation);
     }
 
+    @Override
     public void updateUI(Recommendation recommendation) {
         recommendationName.setText(recommendation.getName());
         cuisineName.setText(recommendation.getCuisine());

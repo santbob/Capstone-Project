@@ -1,5 +1,8 @@
 package com.letmeeat.letmeeat.views;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -58,7 +61,59 @@ public class CardFlipper extends RelativeLayout implements CardBaseView.CardInte
     }
 
     @Override
-    public void flip(boolean isBack) {
+    public void flip(boolean toBack) {
+        if (toBack) {
+            final ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 90);
+            valueAnimator.setDuration(200);
+            valueAnimator.addListener(new AnimatorListenerAdapter() {
 
+                public void onAnimationEnd(Animator animator) {
+                    backView.setVisibility(View.VISIBLE);
+                    frontView.setVisibility(View.INVISIBLE);
+                    ValueAnimator valueAnimator = ValueAnimator.ofFloat(-90, 0);
+                    valueAnimator.setDuration(200);
+                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                            backView.setRotationY((Float) valueAnimator.getAnimatedValue());
+                        }
+                    });
+                    valueAnimator.start();
+                }
+            });
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    frontView.setRotationY((Float) valueAnimator.getAnimatedValue());
+                }
+            });
+            valueAnimator.start();
+        } else {
+            final ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, -90);
+            valueAnimator.setDuration(200);
+            valueAnimator.addListener(new AnimatorListenerAdapter() {
+
+                public void onAnimationEnd(Animator animator) {
+                    backView.setVisibility(View.INVISIBLE);
+                    frontView.setVisibility(View.VISIBLE);
+                    ValueAnimator valueAnimator = ValueAnimator.ofFloat(90, 0);
+                    valueAnimator.setDuration(200);
+                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                            frontView.setRotationY((Float) valueAnimator.getAnimatedValue());
+                        }
+                    });
+                    valueAnimator.start();
+                }
+            });
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    backView.setRotationY((Float) valueAnimator.getAnimatedValue());
+                }
+            });
+            valueAnimator.start();
+        }
     }
 }
