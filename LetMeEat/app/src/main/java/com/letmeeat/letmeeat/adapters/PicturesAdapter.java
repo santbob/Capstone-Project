@@ -4,10 +4,10 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 
 import com.letmeeat.letmeeat.R;
 import com.letmeeat.letmeeat.views.CardBackView;
-import com.letmeeat.letmeeat.views.SquareImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
@@ -24,12 +24,14 @@ public class PicturesAdapter extends BaseAdapter {
     private List<String> pictureUrls = Collections.emptyList();
     private CardBackView cardBackView;
     private int padInPx;
+    private int imageWidth;
 
     public PicturesAdapter(Context context, CardBackView cardBackView, List<String> pictureUrls) {
         this.context = context;
         this.cardBackView = cardBackView;
         this.pictureUrls = pictureUrls;
         this.padInPx = context.getResources().getDimensionPixelSize(R.dimen.medium_pad);
+        this.imageWidth = context.getResources().getDimensionPixelSize(R.dimen.picture_width);
     }
 
     public void updateData(List<String> pictureUrls) {
@@ -75,14 +77,19 @@ public class PicturesAdapter extends BaseAdapter {
 //        Picasso.with(context).load(pictureUrl).into(viewHolder.imageView);
 //        view.setVisibility(View.VISIBLE);
 //        return view;
-        SquareImageView view = (SquareImageView) convertView;
+        ImageView view = (ImageView) convertView;
         if (view == null) {
-            view = new SquareImageView(context);
+            view = new ImageView(context);
             view.setPadding(padInPx, padInPx, padInPx, padInPx);
         }
         String url = (String) getItem(position);
 
-        Picasso.with(context).load(url).into(view);
+        Picasso.with(context)
+                .load(url)
+                .resize(imageWidth, imageWidth)
+                .centerCrop()
+                .into(view);
+        //Picasso.with(context).load(url).into(view);
         return view;
     }
 
