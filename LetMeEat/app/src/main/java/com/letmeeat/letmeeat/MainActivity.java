@@ -3,13 +3,10 @@ package com.letmeeat.letmeeat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,14 +24,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.letmeeat.letmeeat.adapters.CardViewPagerAdapter;
-import com.letmeeat.letmeeat.helpers.Utils;
+import com.letmeeat.letmeeat.adapters.RecommendationListAdapter;
 import com.letmeeat.letmeeat.models.Recommendation;
 import com.letmeeat.letmeeat.service.ApiService;
-import com.letmeeat.letmeeat.views.CardFlipper;
-import com.letmeeat.letmeeat.views.CardViewPager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -43,15 +36,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity {
     private final String TAG = getClass().getSimpleName();
 
-    private CardViewPager cardViewPager;
-    private CardViewPagerAdapter cardViewPagerAdapter;
-    private LinearLayout noRecommendations;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView recomendationsListView;
+    private RecommendationListAdapter recommendationListAdapter;
+    private LinearLayout noRecommendationsLayout;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authListener;
-
 
     //FB login callbackManager
     private CallbackManager fbCallbackManager;
@@ -64,15 +57,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener() {
@@ -113,35 +97,26 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //                }
 //
 //        );
-        cardViewPager = (CardViewPager) findViewById(R.id.view_pager);
-        cardViewPagerAdapter = new CardViewPagerAdapter();
-        cardViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getData();
             }
+        });
 
+        recomendationsListView = (RecyclerView) findViewById(R.id.reco_list_view);
+        recomendationsListView.setHasFixedSize(true);
+        recomendationsListView.setLayoutManager(new LinearLayoutManager(this));
+        recommendationListAdapter = new RecommendationListAdapter(this, new RecommendationListAdapter.OnItemClickListener() {
             @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onItemClick(View view, int position) {
 
             }
         });
-        //for previous and next page
-        cardViewPager.setClipToPadding(false);
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        float multiplier = (float) ((metrics.density % 1) > 0 ? 20.0 * 0.7 : 0);
-        float dp = multiplier + 20;
-        int px = Utils.convertDipToPixel(getApplicationContext(), (int) dp);
-        cardViewPager.setPadding(px, 0, px, 0);
-        cardViewPager.setAdapter(cardViewPagerAdapter);
-
-        noRecommendations = (LinearLayout) findViewById(R.id.no_recommendations);
+        recomendationsListView.setAdapter(recommendationListAdapter);
+        noRecommendationsLayout = (LinearLayout) findViewById(R.id.no_recommendations);
 
         init();
     }
@@ -202,18 +177,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         call.enqueue(new Callback<List<Recommendation>>() {
             @Override
             public void onResponse(Call<List<Recommendation>> call, Response<List<Recommendation>> response) {
-                List<CardFlipper> cardFlippers = new ArrayList<CardFlipper>();
+                swipeRefreshLayout.setRefreshing(false);
                 if (response.body() != null && response.body().size() > 0) {
-                    for (Recommendation recommendation : response.body()) {
-                        CardFlipper cardContainer = new CardFlipper(MainActivity.this, recommendation);
-                        cardFlippers.add(cardContainer);
-                    }
-                    cardViewPager.setVisibility(View.VISIBLE);
-                    noRecommendations.setVisibility(View.GONE);
-                    cardViewPagerAdapter.updateViews(cardFlippers);
+                    List<Recommendation> recommendations = response.body();
+                    recomendationsListView.setVisibility(View.VISIBLE);
+                    noRecommendationsLayout.setVisibility(View.GONE);
+                    recommendationListAdapter.updateData(recommendations);
+
                 } else {
-                    cardViewPager.setVisibility(View.GONE);
-                    noRecommendations.setVisibility(View.VISIBLE);
+                    recomendationsListView.setVisibility(View.GONE);
+                    noRecommendationsLayout.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -227,12 +200,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 
     @Override
@@ -254,26 +222,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         }
 
-        if (id == R.id.action_refresh) {
-            init();
-        }
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        if (id == R.id.nav_preferences) {
-            Intent intent = new Intent(this, PreferencesActivity.class);
-            startActivity(intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -32,7 +32,11 @@
     <string name="please_wait">Please wait</string>
     <string name="reviews">%1$d reviews</string>
     <string name="price_range">Price Range $ %1$d - %2$d</string>
+    <string name="pricerange">$%1$d - %2$d</string>
     <string name="no_recommendations">We don\'t have recommendations at this time, please check again later</string>
     <string name="static_map_url">https://maps.googleapis.com/maps/api/staticmap?center=%1$s&amp;zoom=13&amp;size=300x150&amp;maptype=roadmap&amp;markers=color:red|%2$s</string>
     <string name="map_intent_url">geo:0,0?q=%1$s</string>
+    <string name="recommendation_image">Picture of Food</string>
+    <string name="reviews_count">%1$d reviews</string>
+    <string name="more_details">More Details...</string>
 </resources>

@@ -1,15 +1,15 @@
 package com.letmeeat.letmeeat.views;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 /**
  * Created by santhosh on 29/11/2016.
  * ImageView whose height will be same as its width
  */
 
-public class SquareImageView extends ImageView {
+public class SquareImageView extends AppCompatImageView {
 
     public SquareImageView(Context context) {
         super(context);
