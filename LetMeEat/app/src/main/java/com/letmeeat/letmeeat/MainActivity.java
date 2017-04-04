@@ -1,6 +1,12 @@
 package com.letmeeat.letmeeat;
 
+import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -25,6 +31,9 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.letmeeat.letmeeat.adapters.RecommendationListAdapter;
+import com.letmeeat.letmeeat.adapters.RecosAdapter;
+import com.letmeeat.letmeeat.db.UpdaterService;
+import com.letmeeat.letmeeat.loaders.RecosLoader;
 import com.letmeeat.letmeeat.models.Recommendation;
 import com.letmeeat.letmeeat.service.ApiService;
 
@@ -36,7 +45,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private final String TAG = getClass().getSimpleName();
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -102,38 +111,62 @@ public class MainActivity extends BaseActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getData();
+                refresh();
             }
         });
 
         recomendationsListView = (RecyclerView) findViewById(R.id.reco_list_view);
         recomendationsListView.setHasFixedSize(true);
         recomendationsListView.setLayoutManager(new LinearLayoutManager(this));
-        recommendationListAdapter = new RecommendationListAdapter(this, new RecommendationListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-
-            }
-        });
-        recomendationsListView.setAdapter(recommendationListAdapter);
+//        recommendationListAdapter = new RecommendationListAdapter(this, new RecommendationListAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                Intent detailsIntent = new Intent(MainActivity.this, RecommendationDetailsActivity.class);
+//                //detailsIntent.putParcelableArrayListExtra("recos", recommendationListAdapter.getRecommendations());
+//                detailsIntent.putExtra("currentIndex", position);
+//                startActivity(detailsIntent);
+//            }
+//        });
+//        recomendationsListView.setAdapter(recommendationListAdapter);
         noRecommendationsLayout = (LinearLayout) findViewById(R.id.no_recommendations);
+        getLoaderManager().initLoader(0, null, MainActivity.this);
 
-        init();
+        if (savedInstanceState == null) {
+            refresh();
+        }
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
+        registerReceiver(mRefreshingReceiver, new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
         firebaseAuth.addAuthStateListener(authListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        unregisterReceiver(mRefreshingReceiver);
         if (authListener != null) {
             firebaseAuth.removeAuthStateListener(authListener);
         }
+    }
+
+    private boolean mIsRefreshing = false;
+
+    private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
+                mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
+                updateRefreshingUI();
+            }
+        }
+    };
+
+    private void updateRefreshingUI() {
+        swipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -160,8 +193,8 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
-    private void init() {
-        getData();
+    private void refresh() {
+        startService(new Intent(this, UpdaterService.class));
     }
 
     private void getData() {
@@ -219,6 +252,8 @@ public class MainActivity extends BaseActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent prefIntent = new Intent(this, PreferencesActivity.class);
+            startActivity(prefIntent);
             return true;
         }
 
@@ -230,5 +265,31 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         fbCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return RecosLoader.newAllRecosInstance(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        RecosAdapter adapter = new RecosAdapter(this, cursor, new RecosAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent detailsIntent = new Intent(MainActivity.this, RecommendationDetailsActivity.class);
+                detailsIntent.putExtra("currentIndex", position);
+                startActivity(detailsIntent);
+            }
+        });
+        adapter.setHasStableIds(true);
+        recomendationsListView.setVisibility(View.VISIBLE);
+        noRecommendationsLayout.setVisibility(View.GONE);
+        recomendationsListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        recomendationsListView.setAdapter(null);
     }
 }

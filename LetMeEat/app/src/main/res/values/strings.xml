@@ -39,4 +39,5 @@
     <string name="recommendation_image">Picture of Food</string>
     <string name="reviews_count">%1$d reviews</string>
     <string name="more_details">More Details...</string>
+    <string name="back_to_main">Back to Main Screen</string>
 </resources>

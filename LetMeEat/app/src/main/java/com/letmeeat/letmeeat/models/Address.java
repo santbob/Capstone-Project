@@ -66,6 +66,7 @@ public class Address {
     }
 
     public String getPrintableAddress(String separter) {
+        separter = (separter != null) ? separter : SPACE;
         String address = "";
         if (!TextUtils.isEmpty(streetLine1)) {
             address += streetLine1;

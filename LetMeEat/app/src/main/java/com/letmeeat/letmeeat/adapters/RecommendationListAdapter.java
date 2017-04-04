@@ -85,6 +85,10 @@ public class RecommendationListAdapter extends RecyclerView.Adapter<Recommendati
         notifyDataSetChanged();
     }
 
+    public List<Recommendation> getRecommendations(){
+        return recommendations;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext())

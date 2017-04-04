@@ -16,10 +16,14 @@ public class Recommendation {
     private int startPrice;
     private int endPrice;
     private String currency;
-    private Address address;
     private String phone;
     private String website;
+    private Address address;
     private List<String> photos;
+
+    public Recommendation() {
+    }
+
 
     public String getName() {
         return name;
@@ -108,4 +112,5 @@ public class Recommendation {
     public void setPhotos(List<String> photos) {
         this.photos = photos;
     }
+
 }
