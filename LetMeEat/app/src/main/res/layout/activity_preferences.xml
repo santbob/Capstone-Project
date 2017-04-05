@@ -22,7 +22,6 @@
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
-        android:id="@+id/pref_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -30,7 +29,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
-            android:id="@+id/min_rating_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -55,7 +53,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/cuisine_section"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

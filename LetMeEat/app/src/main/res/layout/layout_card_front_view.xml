@@ -4,7 +4,6 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/front_layout_new"
         android:layout_width="310dp"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
@@ -17,7 +16,6 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/title_sec"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/top_row_bg">
@@ -132,7 +130,6 @@
 
 
         <LinearLayout
-            android:id="@+id/map_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

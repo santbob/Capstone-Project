@@ -3,7 +3,6 @@
     <color name="colorPrimary">#ff5722</color>
     <color name="colorPrimaryDark">#d84315</color>
     <color name="colorAccent">#795548</color>
-    <color name="theme_100">#ffccbc</color>
     <color name="theme_200">#ffab91</color>
     <color name="white">#FFFFFF</color>
     <color name="charcoal">#444</color>
@@ -13,5 +12,4 @@
     <color name="dark_grey">#666</color>
     <color name="black">#000</color>
     <color name="photo_placeholder">#ccc</color>
-    <color name="theme_accent">#04561A</color>
 </resources>

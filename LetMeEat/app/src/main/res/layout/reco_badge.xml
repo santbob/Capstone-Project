@@ -11,7 +11,6 @@
         android:scaleType="fitCenter" />
 
     <LinearLayout
-        android:id="@+id/details"
         android:layout_width="0dp"
         android:layout_height="118dp"
         android:layout_margin="1dp"
@@ -34,7 +33,6 @@
             android:textSize="12sp" />
 
         <LinearLayout
-            android:id="@+id/review_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_pad"
@@ -92,7 +90,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/price_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_pad"
