@@ -27,7 +27,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
     private final OnItemClickListener itemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, long itemId);
+        void onItemClick(long itemId);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -60,7 +60,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, RecosAdapter.this.getItemId(getAdapterPosition()));
+                itemClickListener.onItemClick(RecosAdapter.this.getItemId(getAdapterPosition()));
             }
         }
     }
@@ -74,7 +74,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recommendation_list_item, parent, false);
+                .inflate(R.layout.reco_list_item, parent, false);
         // set the view's size, margins, paddings and layout parameters
 
         return new ViewHolder(linearLayout);

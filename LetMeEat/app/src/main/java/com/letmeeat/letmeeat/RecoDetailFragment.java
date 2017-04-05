@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import com.letmeeat.letmeeat.db.RecosContract;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
 import com.letmeeat.letmeeat.models.Address;
 import com.letmeeat.letmeeat.views.DrawInsetsFrameLayout;
-import com.letmeeat.letmeeat.views.ObservableScrollView;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -40,7 +38,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
     private long mItemId;
     private View mRootView;
     private int mMutedColor = 0xFF333333;
-    private ObservableScrollView mScrollView;
     private DrawInsetsFrameLayout mDrawInsetsFrameLayout;
     private ColorDrawable mStatusBarColorDrawable;
 
@@ -49,7 +46,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
     private int mTopInset;
     private View mPhotoContainerView;
     private ImageView mPhotoView;
-    private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
 
@@ -126,15 +122,15 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
 
     private void updateStatusBar() {
         int color = 0;
-        if (mPhotoView != null && mTopInset != 0 && mScrollY > 0) {
-            float f = progress(mScrollY,
-                    mStatusBarFullOpacityBottom - mTopInset * 3,
-                    mStatusBarFullOpacityBottom - mTopInset);
-            color = Color.argb((int) (255 * f),
-                    (int) (Color.red(mMutedColor) * 0.9),
-                    (int) (Color.green(mMutedColor) * 0.9),
-                    (int) (Color.blue(mMutedColor) * 0.9));
-        }
+//        if (mPhotoView != null && mTopInset != 0 && mScrollY > 0) {
+//            float f = progress(mScrollY,
+//                    mStatusBarFullOpacityBottom - mTopInset * 3,
+//                    mStatusBarFullOpacityBottom - mTopInset);
+//            color = Color.argb((int) (255 * f),
+//                    (int) (Color.red(mMutedColor) * 0.9),
+//                    (int) (Color.green(mMutedColor) * 0.9),
+//                    (int) (Color.blue(mMutedColor) * 0.9));
+//        }
         mStatusBarColorDrawable.setColor(color);
         mDrawInsetsFrameLayout.setInsetBackground(mStatusBarColorDrawable);
     }
@@ -265,6 +261,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         }
 
         // account for parallax
-        return mIsCard ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY : mPhotoView.getHeight() - mScrollY;
+        return mIsCard ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() : mPhotoView.getHeight();
     }
 }

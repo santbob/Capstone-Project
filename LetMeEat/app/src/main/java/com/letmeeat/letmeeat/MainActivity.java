@@ -232,7 +232,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         final RecosAdapter adapter = new RecosAdapter(this, cursor, new RecosAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, long itemId) {
+            public void onItemClick(long itemId) {
                 startActivity(new Intent(Intent.ACTION_VIEW, RecosContract.RecosEntry.buildItemUri(itemId)));
             }
         });

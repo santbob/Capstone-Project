@@ -1,12 +1,8 @@
 <resources>
     <string name="app_name">Let Me Eat</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="fb_login_protocol_scheme">187406745037249</string>
     <string name="action_settings">Settings</string>
-    <string name="action_refresh">Refresh</string>
     <string name="action_preferences">Preferences</string>
     <string name="flip_the_card">Flip the Card</string>
     <string name="fav_reco">Favourite this recommendation</string>
@@ -15,16 +11,11 @@
     <string name="rating_star_3">Ratings Star Number 3</string>
     <string name="rating_star_4">Ratings Star Number 4</string>
     <string name="rating_star_5">Ratings Star Number 5s</string>
-    <string name="address_icon">Icon representing an address</string>
     <string name="get_directions">Get Directions</string>
-    <string name="directions_icon">Directions Icon</string>
-    <string name="phone_icon">Phone Icon</string>
-    <string name="link_icon">Website Icon</string>
     <string name="thumb_down_icon">Thumb down Icon, touch if you dont like this recommendation</string>
     <string name="thumb_up_icon">Thumb up Icon, touch if you like this recommendation</string>
     <string name="photos">Photos</string>
     <string name="lookup_cuisine">Search and add Cuisine you prefer</string>
-    <string name="plus_icon">Plus Icon which when clicked will add the entered cuisine to the preference</string>
     <string name="minimum_ratings">Minimum Ratings</string>
     <string name="default_minimum_ratings">3.5</string>
     <string name="save_preferences">Save Preferences</string>
@@ -38,6 +29,8 @@
     <string name="map_intent_url">geo:0,0?q=%1$s</string>
     <string name="recommendation_image">Picture of Food</string>
     <string name="reviews_count">%1$d reviews</string>
-    <string name="more_details">More Details...</string>
+    <string name="more_details">More Details&#8230;</string>
     <string name="back_to_main">Back to Main Screen</string>
+    <string name="delete">Delete</string>
+    <string name="float_placeholder">%1$d</string>
 </resources>

@@ -8,6 +8,7 @@ import com.letmeeat.letmeeat.db.RecosContract;
 
 /**
  * Created by santhosh on 04/04/2017.
+ * Loader class for the loading the recommendations or recommendation and return a cursor.
  */
 
 public class RecosLoader extends CursorLoader {

@@ -20,5 +20,6 @@
         android:id="@+id/del_tag_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/delete"
         android:src="@drawable/close_circle_outline" />
 </LinearLayout>

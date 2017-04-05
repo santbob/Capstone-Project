@@ -115,7 +115,7 @@ public class UpdaterService extends IntentService {
                         try {
                             getContentResolver().applyBatch(RecosContract.CONTENT_AUTHORITY, cpo);
                         } catch (RemoteException | OperationApplicationException e) {
-
+                            //do nothing
                         }
                     }
                 }

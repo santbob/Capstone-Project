@@ -147,7 +147,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
                                 }
                             }
                             if (preferencesModel.getMinimumRatings() > 0) {
-                                minRatingsTextView.setText(Float.toString(preferencesModel.getMinimumRatings()));
+                                minRatingsTextView.setText(getString(R.string.float_placeholder, preferencesModel.getMinimumRatings()));
                             }
                         }
                     }
