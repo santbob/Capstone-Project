@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.letmeeat.letmeeat.models.Recommendation;
@@ -70,6 +71,19 @@ public class UpdaterService extends IntentService {
         Call<List<Recommendation>> call = service.getRecommendations();
 
         call.enqueue(new Callback<List<Recommendation>>() {
+            private String getSpaceSepartedString(List<String> stringList) {
+                StringBuilder builder = new StringBuilder();
+                if (stringList != null && stringList.size() > 0) {
+                    for (String text : stringList) {
+                        if (!TextUtils.isEmpty(text)) {
+                            builder.append(text);
+                            builder.append(RecosContract.SPACE);
+                        }
+                    }
+                }
+                return builder.toString().trim();
+            }
+
             @Override
             public void onResponse(Call<List<Recommendation>> call, Response<List<Recommendation>> response) {
                 if (response.body() != null && response.body().size() > 0) {
@@ -95,7 +109,7 @@ public class UpdaterService extends IntentService {
                             values.put(RecosContract.RecosEntry.COLUMN_ZIP, reco.getAddress().getZip());
                             values.put(RecosContract.RecosEntry.COLUMN_LANDMARK, reco.getAddress().getLandmark());
                             values.put(RecosContract.RecosEntry.COLUMN_COUNTRY, "USA");
-                            values.put(RecosContract.RecosEntry.COLUMN_PICTURES, reco.getPhotos().toString());
+                            values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(reco.getPhotos()));
                             cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
                         }
                         try {

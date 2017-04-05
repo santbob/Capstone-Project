@@ -13,6 +13,7 @@ public class RecosContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_RECOS = "recos";
+    public static final String SPACE = " ";
 
     public static final class RecosEntry implements BaseColumns {
 

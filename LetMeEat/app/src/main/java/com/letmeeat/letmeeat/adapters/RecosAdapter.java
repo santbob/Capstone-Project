@@ -27,7 +27,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
     private final OnItemClickListener itemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position);
+        void onItemClick(View view, long itemId);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -60,7 +60,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, getAdapterPosition());
+                itemClickListener.onItemClick(view, RecosAdapter.this.getItemId(getAdapterPosition()));
             }
         }
     }
@@ -92,7 +92,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         byte[] blob = cursor.getBlob(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PICTURES));
 
         String pictureBlob = new String(blob);
-        String[] pictures = pictureBlob.split(",");
+        String[] pictures = pictureBlob.split(RecosContract.SPACE);
 
         if (pictures[0] != null) {
             Picasso.with(activity).load(pictures[0])
@@ -129,5 +129,11 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return cursor != null ? cursor.getCount() : 0;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        cursor.moveToPosition(position);
+        return cursor.getLong(cursor.getColumnIndex(RecosContract.RecosEntry._ID));
     }
 }

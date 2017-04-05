@@ -148,10 +148,10 @@ public class RecosProvider extends ContentProvider {
         switch (match) {
             case RECOS:
                 // directory
-                return "vnd.android.cursor.dir" + "/" + RecosContract.CONTENT_AUTHORITY + "/" + RecosContract.PATH_RECOS;
+                return "vnd.android.cursor.dir" + "/" + RecosContract.CONTENT_AUTHORITY + "." + RecosContract.PATH_RECOS;
             case RECOS_WITH_ID:
                 // single item type
-                return "vnd.android.cursor.item" + "/" + RecosContract.CONTENT_AUTHORITY + "/" + RecosContract.PATH_RECOS;
+                return "vnd.android.cursor.item" + "/" + RecosContract.CONTENT_AUTHORITY + "." + RecosContract.PATH_RECOS;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

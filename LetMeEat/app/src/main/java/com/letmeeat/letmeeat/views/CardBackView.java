@@ -11,10 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.letmeeat.letmeeat.R;
-import com.letmeeat.letmeeat.adapters.PicturesAdapter;
+import com.letmeeat.letmeeat.adapters.PhotosAdapter;
 import com.letmeeat.letmeeat.models.Recommendation;
-
-import java.util.ArrayList;
 
 /**
  * Created by santhosh on 18/10/2016.
@@ -25,7 +23,7 @@ public class CardBackView extends CardBaseView {
 
     private TextView recommendationName;
     private GridView gridView;
-    private PicturesAdapter picturesAdapter;
+    private PhotosAdapter picturesAdapter;
 
     public CardBackView(Context context) {
         super(context);
@@ -51,7 +49,7 @@ public class CardBackView extends CardBaseView {
 
         recommendationName = (TextView) findViewById(R.id.recommendation_name);
         gridView = (GridView) findViewById(R.id.pictures_gridview);
-        picturesAdapter = new PicturesAdapter(context, this, new ArrayList<String>());
+        picturesAdapter = new PhotosAdapter(context, null);
         gridView.setAdapter(picturesAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -73,6 +71,6 @@ public class CardBackView extends CardBaseView {
     @Override
     public void updateUI(Recommendation recommendation) {
         recommendationName.setText(recommendation.getName());
-        picturesAdapter.updateData(recommendation.getPhotos());
+        //picturesAdapter.updateData(recommendation.getPhotos());
     }
 }

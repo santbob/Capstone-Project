@@ -12,4 +12,6 @@
     <color name="grey">#bbb</color>
     <color name="dark_grey">#666</color>
     <color name="black">#000</color>
+    <color name="photo_placeholder">#ccc</color>
+    <color name="theme_accent">#04561A</color>
 </resources>
