@@ -107,16 +107,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         recomendationsListView = (RecyclerView) findViewById(R.id.reco_list_view);
         recomendationsListView.setHasFixedSize(true);
         recomendationsListView.setLayoutManager(new LinearLayoutManager(this));
-//        recommendationListAdapter = new RecommendationListAdapter(this, new RecommendationListAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                Intent detailsIntent = new Intent(MainActivity.this, RecommendationDetailsActivity.class);
-//                //detailsIntent.putParcelableArrayListExtra("recos", recommendationListAdapter.getRecommendations());
-//                detailsIntent.putExtra("currentIndex", position);
-//                startActivity(detailsIntent);
-//            }
-//        });
-//        recomendationsListView.setAdapter(recommendationListAdapter);
         noRecommendationsLayout = (LinearLayout) findViewById(R.id.no_recommendations);
         getLoaderManager().initLoader(0, null, MainActivity.this);
 

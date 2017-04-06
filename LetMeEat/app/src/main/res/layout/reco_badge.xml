@@ -133,6 +133,7 @@
             android:id="@+id/phone"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/open_number_on_phone"
             android:paddingBottom="@dimen/small_pad"
             android:paddingTop="@dimen/small_pad"
             android:src="@drawable/ic_phone" />
@@ -141,6 +142,7 @@
             android:id="@+id/link"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/opens_link"
             android:paddingBottom="@dimen/small_pad"
             android:paddingTop="@dimen/small_pad"
             android:src="@drawable/ic_link_variant" />
@@ -149,6 +151,7 @@
             android:id="@+id/directions"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/get_directions"
             android:paddingBottom="@dimen/small_pad"
             android:paddingTop="@dimen/small_pad"
             android:src="@drawable/ic_directions" />
