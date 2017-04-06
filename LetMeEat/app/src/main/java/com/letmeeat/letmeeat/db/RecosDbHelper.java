@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * DB class which creates and deletes reco table
  */
 
-public class RecosDbHelper extends SQLiteOpenHelper {
+class RecosDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "letmeeat.db";
     private static final int DATABASE_VERSION = 1;
 

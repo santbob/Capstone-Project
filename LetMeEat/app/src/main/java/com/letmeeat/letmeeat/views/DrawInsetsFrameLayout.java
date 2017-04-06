@@ -1,9 +1,5 @@
 package com.letmeeat.letmeeat.views;
 
-/**
- * Created by santhosh on 04/04/2017.
- */
-
 /*
  * Copyright 2014 Google Inc.
  *
@@ -39,7 +35,7 @@ public class DrawInsetsFrameLayout extends FrameLayout {
     private Drawable mSideInsetBackground;
 
     private Rect mInsets;
-    private Rect mTempRect = new Rect();
+    private final Rect mTempRect = new Rect();
     private OnInsetsCallback mOnInsetsCallback;
 
     public DrawInsetsFrameLayout(Context context) {

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="130dp"
     android:layout_marginBottom="@dimen/large_pad"
-    android:background="@drawable/round_gray_border"
+    android:background="@drawable/border_rounded"
     android:baselineAligned="false"
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal">

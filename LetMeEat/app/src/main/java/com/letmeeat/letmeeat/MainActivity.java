@@ -134,7 +134,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     private boolean mIsRefreshing = false;
 
-    private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
@@ -176,11 +176,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         startService(new Intent(this, UpdaterService.class));
     }
 
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

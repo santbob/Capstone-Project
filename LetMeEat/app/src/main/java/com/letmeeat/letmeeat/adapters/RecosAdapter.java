@@ -24,11 +24,11 @@ import com.squareup.picasso.Picasso;
 
 public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> {
 
-    private Cursor cursor;
+    private final Cursor cursor;
     private final Activity activity;
     private final OnItemClickListener itemClickListener;
 
-    private IntentHelper intentHelper;
+    private final IntentHelper intentHelper;
 
     public interface OnItemClickListener {
         void onItemClick(long itemId);

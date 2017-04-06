@@ -3,9 +3,8 @@
     <color name="colorPrimary">#ff5722</color>
     <color name="colorPrimaryDark">#d84315</color>
     <color name="colorAccent">#795548</color>
-    <color name="white">#FFFFFF</color>
+    <color name="white">#fff</color>
     <color name="charcoal">#444</color>
-    <color name="grey">#bbb</color>
     <color name="dark_grey">#666</color>
     <color name="black">#000</color>
     <color name="photo_placeholder">#ccc</color>

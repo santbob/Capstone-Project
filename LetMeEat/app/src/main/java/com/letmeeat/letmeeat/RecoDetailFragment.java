@@ -35,7 +35,7 @@ import com.squareup.picasso.Picasso;
 public class RecoDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private final String TAG = getClass().getSimpleName();
 
-    public static final String ARG_ITEM_ID = "item_id";
+    private static final String ARG_ITEM_ID = "item_id";
     private static final float PARALLAX_FACTOR = 1.25f;
 
     private Cursor mCursor;
@@ -50,7 +50,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
     private int mTopInset;
     private View mPhotoContainerView;
     private ImageView mPhotoView;
-    private boolean mIsCard = false;
+    private final boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
 
     private IntentHelper intentHelper;
@@ -147,7 +147,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         return constrain((v - min) / (max - min), 0, 1);
     }
 
-    static float constrain(float val, float min, float max) {
+    private static float constrain(float val, float min, float max) {
         if (val < min) {
             return min;
         } else if (val > max) {

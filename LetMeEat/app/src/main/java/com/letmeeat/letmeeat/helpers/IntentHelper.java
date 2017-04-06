@@ -13,7 +13,7 @@ import com.letmeeat.letmeeat.R;
 
 public class IntentHelper {
 
-    private Activity activity;
+    private final Activity activity;
 
     public IntentHelper(Activity activity) {
         this.activity = activity;

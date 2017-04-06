@@ -39,7 +39,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
     };
 
     private DatabaseReference preferencesDBRef;
-    private List<String> cuisinePref = new ArrayList<String>();
+    private final List<String> cuisinePref = new ArrayList<String>();
     private Preferences preferencesModel;
 
 

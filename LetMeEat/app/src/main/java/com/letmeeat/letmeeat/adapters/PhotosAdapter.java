@@ -16,10 +16,10 @@ import com.squareup.picasso.Picasso;
 
 public class PhotosAdapter extends BaseAdapter {
 
-    private Context context;
-    private String[] pictureUrls;
-    private int padInPx;
-    private int imageWidth;
+    private final Context context;
+    private final String[] pictureUrls;
+    private final int padInPx;
+    private final int imageWidth;
 
     public PhotosAdapter(Context context, String[] pictureUrls) {
         this.context = context;

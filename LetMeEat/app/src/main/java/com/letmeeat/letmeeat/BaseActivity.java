@@ -1,7 +1,6 @@
 package com.letmeeat.letmeeat;
 
 import android.app.ProgressDialog;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
@@ -14,12 +13,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    protected void showProgressDialog(String title, String message) {
+    void showProgressDialog(String title, String message) {
         if (TextUtils.isEmpty(title)) {
             title = getString(R.string.processing);
         }
@@ -38,7 +32,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void hideProgressDialog() {
+    void hideProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.hide();
         }

@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Modifications:
+ * -Imported from AOSP frameworks/base/core/java/com/android/internal/content
+ * -Changed package name
+ */
+
+
 package com.letmeeat.letmeeat.db;
 
 import android.content.ContentValues;
@@ -10,9 +33,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * Created by santhosh on 26/03/2017.
+ * Helper for building selection clauses for {@link SQLiteDatabase}. Each
+ * appended clause is combined using {@code AND}. This class is <em>not</em>
+ * thread safe.
  */
-
 public class SelectionBuilder {
     private String mTable = null;
     private HashMap<String, String> mProjectionMap;
@@ -113,7 +137,7 @@ public class SelectionBuilder {
      *
      * @see #getSelectionArgs()
      */
-    public String getSelection() {
+    private String getSelection() {
         if (mSelection != null) {
             return mSelection.toString();
         } else {
@@ -126,7 +150,7 @@ public class SelectionBuilder {
      *
      * @see #getSelection()
      */
-    public String[] getSelectionArgs() {
+    private String[] getSelectionArgs() {
         if (mSelectionArgs != null) {
             return mSelectionArgs.toArray(new String[mSelectionArgs.size()]);
         } else {
@@ -160,8 +184,8 @@ public class SelectionBuilder {
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
      */
-    public Cursor query(SQLiteDatabase db, String[] columns, String groupBy,
-                        String having, String orderBy, String limit) {
+    private Cursor query(SQLiteDatabase db, String[] columns, String groupBy,
+                         String having, String orderBy, String limit) {
         assertTable();
         if (columns != null) mapColumns(columns);
         return db.query(mTable, columns, getSelection(), getSelectionArgs(), groupBy, having,
