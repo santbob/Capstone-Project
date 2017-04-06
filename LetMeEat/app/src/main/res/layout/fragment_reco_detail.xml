@@ -54,11 +54,18 @@
                     android:stretchMode="columnWidth"
                     android:verticalSpacing="@dimen/image_thumbnail_spacing" />
 
+                <WebView
+                    android:id="@+id/map_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/map_height"
+                    android:layout_below="@+id/photos_gridview" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_alignParentBottom="true"
                     android:background="#eff"
+                    android:elevation="4dp"
                     android:baselineAligned="false"
                     android:descendantFocusability="blocksDescendants"
                     android:orientation="horizontal">

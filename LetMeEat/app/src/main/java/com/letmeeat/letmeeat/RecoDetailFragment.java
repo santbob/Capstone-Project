@@ -7,10 +7,12 @@ import android.database.Cursor;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 
 import com.letmeeat.letmeeat.adapters.PhotosAdapter;
 import com.letmeeat.letmeeat.db.RecosContract;
+import com.letmeeat.letmeeat.helpers.IntentHelper;
+import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
 import com.letmeeat.letmeeat.models.Address;
 import com.letmeeat.letmeeat.views.DrawInsetsFrameLayout;
@@ -48,6 +52,8 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
     private ImageView mPhotoView;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
+
+    private IntentHelper intentHelper;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -115,6 +121,8 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         });
         mStatusBarColorDrawable = new ColorDrawable(0);
 
+        intentHelper = new IntentHelper(getActivity());
+
         bindViews();
         updateStatusBar();
         return mRootView;
@@ -165,8 +173,11 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         ImageView ratingStar5 = (ImageView) mRootView.findViewById(R.id.rating_star_5);
         TextView cuisine = (TextView) mRootView.findViewById(R.id.cuisine_type);
         TextView address = (TextView) mRootView.findViewById(R.id.address);
-//        ImageView seeMore = (ImageView) mRootView.findViewById(R.id.see_more);
-//        seeMore.setVisibility(View.GONE);
+        WebView mapView = (WebView) mRootView.findViewById(R.id.map_view);
+
+        ImageView phoneIcon = (ImageView) mRootView.findViewById(R.id.phone);
+        ImageView linkIcon = (ImageView) mRootView.findViewById(R.id.link);
+        ImageView directionsIcon = (ImageView) mRootView.findViewById(R.id.directions);
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -202,7 +213,51 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
 
             priceRange.setText(getActivity().getString(R.string.pricerange, mCursor.getInt(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_START_PRICE)), mCursor.getInt(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_END_PRICE))));
             cuisine.setText(mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CUISINE)));
-            address.setText(getPrintableAddress(mCursor));
+
+            Address addressObj = getPrintableAddress(mCursor);
+            address.setText(addressObj.getPrintableAddress(null));
+            final String printableAddress = addressObj.getPrintableAddress(Address.COMMA);
+            String mapUrl = getString(R.string.static_map_url, Utils.urlEncode(addressObj.getCity()), Utils.urlEncode(printableAddress), getResources().getConfiguration().screenWidthDp, 150);
+            mapView.loadUrl(mapUrl);
+            mapView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    intentHelper.sendMapIntent(printableAddress);
+                }
+            });
+
+            directionsIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    intentHelper.sendMapIntent(printableAddress);
+                }
+            });
+
+            final String phoneNumber = mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PHONE));
+            if (TextUtils.isEmpty(phoneNumber)) {
+                phoneIcon.setVisibility(View.GONE);
+            } else {
+                phoneIcon.setVisibility(View.VISIBLE);
+                phoneIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        intentHelper.sendDialIntent(phoneNumber);
+                    }
+                });
+            }
+
+            final String link = mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_WEBSITE));
+            if (TextUtils.isEmpty(phoneNumber)) {
+                linkIcon.setVisibility(View.GONE);
+            } else {
+                linkIcon.setVisibility(View.VISIBLE);
+                linkIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        intentHelper.sendWebIntent(link);
+                    }
+                });
+            }
 
         } else {
             mRootView.setVisibility(View.GONE);
@@ -214,7 +269,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
                 .into(mPhotoView);
     }
 
-    private String getPrintableAddress(Cursor cursor) {
+    private Address getPrintableAddress(Cursor cursor) {
         Address address = new Address();
         address.setStreetLine1(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_1)));
         address.setStreetLine2(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_2)));
@@ -222,7 +277,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         address.setState(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_STATE)));
         address.setZip(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_ZIP)));
         address.setLandmark(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_LANDMARK)));
-        return address.getPrintableAddress(null);
+        return address;
     }
 
     @Override

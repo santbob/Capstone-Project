@@ -3,6 +3,7 @@ package com.letmeeat.letmeeat.adapters;
 import android.app.Activity;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.letmeeat.letmeeat.R;
 import com.letmeeat.letmeeat.db.RecosContract;
+import com.letmeeat.letmeeat.helpers.IntentHelper;
 import com.letmeeat.letmeeat.models.Address;
 import com.squareup.picasso.Picasso;
 
@@ -26,6 +28,8 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
     private final Activity activity;
     private final OnItemClickListener itemClickListener;
 
+    private IntentHelper intentHelper;
+
     public interface OnItemClickListener {
         void onItemClick(long itemId);
     }
@@ -39,7 +43,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         private final TextView cuisine;
         private final TextView address;
         private final ImageView image;
-        private final ImageView ratingStar1, ratingStar2, ratingStar3, ratingStar4, ratingStar5;
+        private final ImageView ratingStar1, ratingStar2, ratingStar3, ratingStar4, ratingStar5, phoneIcon, linkIcon, directionsIcon;
 
         public ViewHolder(LinearLayout v) {
             super(v);
@@ -54,6 +58,9 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
             ratingStar5 = (ImageView) v.findViewById(R.id.rating_star_5);
             cuisine = (TextView) v.findViewById(R.id.cuisine_type);
             address = (TextView) v.findViewById(R.id.address);
+            phoneIcon = (ImageView) v.findViewById(R.id.phone);
+            linkIcon = (ImageView) v.findViewById(R.id.link);
+            directionsIcon = (ImageView) v.findViewById(R.id.directions);
             v.setOnClickListener(this);
         }
 
@@ -69,6 +76,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         this.activity = activity;
         this.itemClickListener = itemClickListener;
         this.cursor = cursor;
+        this.intentHelper = new IntentHelper(activity);
     }
 
     @Override
@@ -111,11 +119,45 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
 
         holder.priceRange.setText(activity.getString(R.string.pricerange, cursor.getInt(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_START_PRICE)), cursor.getInt(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_END_PRICE))));
         holder.cuisine.setText(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CUISINE)));
-        holder.address.setText(getPrintableAddress(cursor));
 
+        final Address address = getPrintableAddress(cursor);
+        holder.address.setText(address.getPrintableAddress(null));
+
+        holder.directionsIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentHelper.sendMapIntent(address.getPrintableAddress(Address.COMMA));
+            }
+        });
+
+        final String phoneNumber = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PHONE));
+        if (TextUtils.isEmpty(phoneNumber)) {
+            holder.phoneIcon.setVisibility(View.GONE);
+        } else {
+            holder.phoneIcon.setVisibility(View.VISIBLE);
+            holder.phoneIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    intentHelper.sendDialIntent(phoneNumber);
+                }
+            });
+        }
+
+        final String link = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_WEBSITE));
+        if (TextUtils.isEmpty(phoneNumber)) {
+            holder.linkIcon.setVisibility(View.GONE);
+        } else {
+            holder.linkIcon.setVisibility(View.VISIBLE);
+            holder.linkIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    intentHelper.sendWebIntent(link);
+                }
+            });
+        }
     }
 
-    private String getPrintableAddress(Cursor cursor) {
+    private Address getPrintableAddress(Cursor cursor) {
         Address address = new Address();
         address.setStreetLine1(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_1)));
         address.setStreetLine2(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_2)));
@@ -123,7 +165,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         address.setState(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_STATE)));
         address.setZip(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_ZIP)));
         address.setLandmark(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_LANDMARK)));
-        return address.getPrintableAddress(null);
+        return address;
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 public class Address {
 
     public static final String SPACE = " ";
+    public static final String COMMA = ",";
     private String streetLine1;
     private String streetLine2;
     private String city;
