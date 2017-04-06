@@ -17,4 +17,8 @@
     <dimen name="detail_photo_height">304dp</dimen>
     <dimen name="detail_card_top_margin">@dimen/detail_photo_height</dimen>
     <dimen name="detail_card_max_width">10000dp</dimen> <!-- force match_parent -->
+
+    <dimen name="image_thumbnail_size">100dp</dimen>
+    <dimen name="image_thumbnail_spacing">1dp</dimen>
+
 </resources>

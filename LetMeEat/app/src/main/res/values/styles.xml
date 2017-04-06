@@ -17,24 +17,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <!--Fonts -->
-    <!--<style name="TextAppearance.FontPathRegular" parent="android:TextAppearance">-->
-        <!--<item name="fontPath">fonts/HelveticaNeueLTStd-Roman.otf</item>-->
-    <!--</style>-->
-    <!--<style name="TextAppearance.FontPathBold" parent="android:TextAppearance">-->
-        <!--<item name="fontPath">fonts/HelveticaNeueLTStd-Bd.otf</item>-->
-    <!--</style>-->
-    <!--<style name="TextAppearance.FontPathLight" parent="android:TextAppearance">-->
-        <!--<item name="fontPath">fonts/HelveticaNeueLTStd-Lt.otf</item>-->
-    <!--</style>-->
-    <!--<style name="TextAppearance.FontPathThin" parent="android:TextAppearance">-->
-        <!--<item name="fontPath">fonts/HelveticaNeueLTStd-Th.otf</item>-->
-    <!--</style>-->
-    <!--<style name="TextAppearance.FontPathMedium" parent="android:TextAppearance">-->
-        <!--<item name="fontPath">fonts/HelveticaNeueLTStd-Md.otf</item>-->
-    <!--</style>-->
-    <!--<style name="TextAppearance.FontPathThinItalic" parent="android:TextAppearance">-->
-        <!--<item name="fontPath">fonts/HelveticaNeueLTStd-ThIt.otf</item>-->
-    <!--</style>-->
+    <style name="PhotoGridLayout">
+        <item name="android:drawSelectorOnTop">true</item>
+        <item name="android:listSelector">@drawable/photogrid_list_selector</item>
+    </style>
 
 </resources>

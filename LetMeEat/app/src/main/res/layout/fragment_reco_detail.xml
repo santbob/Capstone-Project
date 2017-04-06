@@ -38,21 +38,21 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/detail_card_top_margin"
-                android:background="#333"
+                android:background="#555"
                 android:elevation="2dp"
                 android:maxWidth="@dimen/detail_card_max_width"
                 android:orientation="vertical">
 
                 <GridView
                     android:id="@+id/photos_gridview"
-                    android:layout_width="match_parent"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:columnWidth="90dp"
+                    android:columnWidth="@dimen/image_thumbnail_size"
                     android:gravity="center"
-                    android:horizontalSpacing="10dp"
-                    android:numColumns="3"
+                    android:horizontalSpacing="@dimen/image_thumbnail_spacing"
+                    android:numColumns="auto_fit"
                     android:stretchMode="columnWidth"
-                    android:verticalSpacing="10dp" />
+                    android:verticalSpacing="@dimen/image_thumbnail_spacing" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -65,7 +65,6 @@
 
                     <include layout="@layout/reco_badge" />
                 </LinearLayout>
-
             </com.letmeeat.letmeeat.views.MaxWidthRelativeLayout>
         </FrameLayout>
     </com.letmeeat.letmeeat.views.DrawInsetsFrameLayout>
