@@ -7,13 +7,13 @@ import android.net.Uri;
 import com.letmeeat.letmeeat.R;
 
 /**
- * Created by santhosh on 23/11/2016.
- * All the Intents that needs to be send will use this Helper class
+ * Created by santhosh on 05/04/2017.
+ * Helps with starting other Intent.
  */
 
 public class IntentHelper {
 
-    private Activity activity;
+    private final Activity activity;
 
     public IntentHelper(Activity activity) {
         this.activity = activity;
@@ -41,5 +41,11 @@ public class IntentHelper {
             return true;
         }
         return false;
+    }
+
+    public void sendDialIntent(String phoneNumber) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + phoneNumber));
+        activity.startActivity(intent);
     }
 }

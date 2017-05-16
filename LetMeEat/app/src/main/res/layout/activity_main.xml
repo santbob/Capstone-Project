@@ -33,9 +33,9 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingBottom="28dp"
-            android:paddingTop="@dimen/medium_pad"
             android:paddingLeft="@dimen/side_margin"
-            android:paddingRight="@dimen/side_margin" />
+            android:paddingRight="@dimen/side_margin"
+            android:paddingTop="@dimen/medium_pad" />
 
         <LinearLayout
             android:id="@+id/no_recommendations"

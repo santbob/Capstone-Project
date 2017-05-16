@@ -1,15 +1,20 @@
 package com.letmeeat.letmeeat.helpers;
 
-import android.content.Context;
-import android.util.TypedValue;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
- * Created by santhosh on 16/11/2016.
+ * Created by santhosh on 05/04/2017.
+ * A static class with bunch of utiltity methods
  */
 
 public class Utils {
 
-    public static int convertDipToPixel(Context context, int dip) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, context.getResources().getDisplayMetrics());
+    public static String urlEncode(String str) {
+        try {
+            return URLEncoder.encode(str, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("failed to encode", e);
+        }
     }
 }

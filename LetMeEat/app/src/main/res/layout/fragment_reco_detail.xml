@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.letmeeat.letmeeat.views.DrawInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/draw_insets_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/photo_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/photo_placeholder">
+                <!--suppress AndroidLintContentDescription -->
+                <ImageView
+                    android:id="@+id/photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/detail_card_top_margin"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="112dp"
+                    android:background="@drawable/photo_background_protection" />
+
+            </FrameLayout>
+
+
+            <com.letmeeat.letmeeat.views.MaxWidthRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/detail_card_top_margin"
+                android:background="#555"
+                android:elevation="2dp"
+                android:maxWidth="@dimen/detail_card_max_width"
+                android:orientation="vertical">
+
+                <GridView
+                    android:id="@+id/photos_gridview"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:columnWidth="@dimen/image_thumbnail_size"
+                    android:gravity="center"
+                    android:horizontalSpacing="@dimen/image_thumbnail_spacing"
+                    android:numColumns="auto_fit"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="@dimen/image_thumbnail_spacing" />
+
+                <WebView
+                    android:id="@+id/map_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/map_height"
+                    android:layout_below="@+id/photos_gridview" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/border"
+                    android:baselineAligned="false"
+                    android:descendantFocusability="blocksDescendants"
+                    android:elevation="4dp"
+                    android:orientation="horizontal">
+
+                    <include layout="@layout/reco_badge" />
+                </LinearLayout>
+            </com.letmeeat.letmeeat.views.MaxWidthRelativeLayout>
+        </FrameLayout>
+    </com.letmeeat.letmeeat.views.DrawInsetsFrameLayout>
+</android.support.design.widget.CoordinatorLayout>

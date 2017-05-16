@@ -37,7 +37,7 @@ public class TagView extends LinearLayout {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public TagView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    private TagView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }

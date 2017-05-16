@@ -9,7 +9,8 @@ import android.text.TextUtils;
 
 public class Address {
 
-    public static final String SPACE = " ";
+    private static final String SPACE = " ";
+    public static final String COMMA = ",";
     private String streetLine1;
     private String streetLine2;
     private String city;
@@ -66,6 +67,7 @@ public class Address {
     }
 
     public String getPrintableAddress(String separter) {
+        separter = (separter != null) ? separter : SPACE;
         String address = "";
         if (!TextUtils.isEmpty(streetLine1)) {
             address += streetLine1;
