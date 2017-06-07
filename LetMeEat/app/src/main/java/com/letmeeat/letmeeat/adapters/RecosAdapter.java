@@ -11,11 +11,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.letmeeat.letmeeat.R;
 import com.letmeeat.letmeeat.db.RecosContract;
 import com.letmeeat.letmeeat.helpers.IntentHelper;
 import com.letmeeat.letmeeat.models.Address;
+import com.letmeeat.letmeeat.models.Category;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by santhosh on 24/03/2017.
@@ -27,6 +32,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
     private final Cursor cursor;
     private final Activity activity;
     private final OnItemClickListener itemClickListener;
+    private Gson gson = new Gson();
 
     private final IntentHelper intentHelper;
 
@@ -40,6 +46,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         private final TextView name;
         private final TextView reviewsCount;
         private final TextView priceRange;
+        private final TextView dotSeparator;
         private final TextView cuisine;
         private final TextView address;
         private final ImageView image;
@@ -50,6 +57,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
             name = (TextView) v.findViewById(R.id.reco_name);
             image = (ImageView) v.findViewById(R.id.reco_image);
             priceRange = (TextView) v.findViewById(R.id.price_range);
+            dotSeparator = (TextView) v.findViewById(R.id.dot_separator);
             reviewsCount = (TextView) v.findViewById(R.id.reviews_count);
             ratingStar1 = (ImageView) v.findViewById(R.id.rating_star_1);
             ratingStar2 = (ImageView) v.findViewById(R.id.rating_star_2);
@@ -97,13 +105,10 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
 
         holder.name.setText(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_NAME)));
 
-        byte[] blob = cursor.getBlob(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PICTURES));
+        String imageUrl = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_IMAGE_URL));
 
-        String pictureBlob = new String(blob);
-        String[] pictures = pictureBlob.split(RecosContract.SPACE);
-
-        if (pictures[0] != null) {
-            Picasso.with(activity).load(pictures[0])
+        if (!TextUtils.isEmpty(imageUrl)) {
+            Picasso.with(activity).load(imageUrl)
                     .resize(200, 200)
                     .centerCrop()
                     .into(holder.image);
@@ -117,8 +122,27 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         holder.ratingStar4.setImageResource(ratings >= 4 ? R.drawable.star : (ratings < 4 && ratings > 3) ? R.drawable.star_half : R.drawable.star_outline);
         holder.ratingStar5.setImageResource(ratings == 5 ? R.drawable.star : (ratings < 5 && ratings > 4) ? R.drawable.star_half : R.drawable.star_outline);
 
-        holder.priceRange.setText(activity.getString(R.string.pricerange, cursor.getInt(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_START_PRICE)), cursor.getInt(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_END_PRICE))));
-        holder.cuisine.setText(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CUISINE)));
+        String priceRange = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PRICE_RANGE));
+        if (!TextUtils.isEmpty(priceRange)) {
+            holder.priceRange.setText(priceRange);
+            holder.dotSeparator.setVisibility(View.VISIBLE);
+        } else {
+            holder.priceRange.setVisibility(View.GONE);
+            holder.dotSeparator.setVisibility(View.GONE);
+        }
+
+        byte[] jsonBytes = cursor.getBlob(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CATEGORIES));
+        String jsonStr = new String(jsonBytes);
+        ArrayList<Category> categories = gson.fromJson(jsonStr, new TypeToken<ArrayList<Category>>() {
+        }.getType());
+        String cuisines = null;
+        if (categories != null && categories.size() > 0) {
+            cuisines = categories.toString();
+            cuisines = cuisines.substring(1, cuisines.length() - 1);
+        }
+        if (cuisines != null) {
+            holder.cuisine.setText(cuisines);
+        }
 
         final Address address = getPrintableAddress(cursor);
         holder.address.setText(address.getPrintableAddress(null));

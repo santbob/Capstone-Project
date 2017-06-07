@@ -190,18 +190,25 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
             String pictureBlob = new String(blob);
             String[] pictures = pictureBlob.split(RecosContract.SPACE);
 
-            if (pictures[0] != null) {
-                Picasso.with(getActivity()).load(pictures[0])
+            String pictureUrl = (pictures.length > 0) ? pictures[0].trim() : null;
+            if (!TextUtils.isEmpty(pictureUrl)) {
+                Picasso.with(getActivity()).load(pictureUrl)
                         .resize(200, 200)
                         .centerCrop()
                         .into(image);
 
-                updateMainPicture(pictures[0]);
+                updateMainPicture(pictureUrl);
+            }
 
+            if (pictures.length > 1) {
                 picturesAdapter = new PhotosAdapter(getActivity(), pictures);
+                mPhotosGridView.setVisibility(View.VISIBLE);
                 mPhotosGridView.setAdapter(picturesAdapter);
                 picturesAdapter.notifyDataSetChanged();
+            } else {
+                mPhotosGridView.setVisibility(View.GONE);
             }
+
             reviewsCount.setText(getActivity().getString(R.string.reviews_count, mCursor.getInt(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT))));
 
             float ratings = mCursor.getFloat(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_RATINGS));
@@ -211,13 +218,13 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
             ratingStar4.setImageResource(ratings >= 4 ? R.drawable.star : (ratings < 4 && ratings > 3) ? R.drawable.star_half : R.drawable.star_outline);
             ratingStar5.setImageResource(ratings == 5 ? R.drawable.star : (ratings < 5 && ratings > 4) ? R.drawable.star_half : R.drawable.star_outline);
 
-            priceRange.setText(getActivity().getString(R.string.pricerange, mCursor.getInt(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_START_PRICE)), mCursor.getInt(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_END_PRICE))));
-            cuisine.setText(mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CUISINE)));
+            priceRange.setText(getActivity().getString(R.string.pricerange, mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PRICE_RANGE))));
+            cuisine.setText(mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CATEGORIES)));
 
             Address addressObj = getPrintableAddress(mCursor);
             address.setText(addressObj.getPrintableAddress(null));
             final String printableAddress = addressObj.getPrintableAddress(Address.COMMA);
-            String mapUrl = getString(R.string.static_map_url, Utils.urlEncode(addressObj.getCity()), Utils.urlEncode(printableAddress), getResources().getConfiguration().screenWidthDp, 150);
+            String mapUrl = getString(R.string.static_map_url, Utils.urlEncode(addressObj.getCity()), Utils.urlEncode(printableAddress), getResources().getConfiguration().screenWidthDp, 300);
             mapView.loadUrl(mapUrl);
             mapView.setOnClickListener(new View.OnClickListener() {
                 @Override

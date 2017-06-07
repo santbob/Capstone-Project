@@ -30,9 +30,9 @@ public class RecosContract {
          */
         public static final String COLUMN_NAME = "name";
         /**
-         * Type: TEXT NOT NULL
+         * Type: BLOB NOT NULL
          */
-        public static final String COLUMN_CUISINE = "cuisine";
+        public static final String COLUMN_CATEGORIES = "categories";
         /**
          * Type: INTEGER NOT NULL DEFAULT 0
          */
@@ -42,13 +42,9 @@ public class RecosContract {
          */
         public static final String COLUMN_RATINGS = "ratings";
         /**
-         * Type: INTEGER NOT NULL DEFAULT 0
+         * Type: TEXT NOT NULL
          */
-        public static final String COLUMN_START_PRICE = "startPrice";
-        /**
-         * Type: INTEGER NOT NULL DEFAULT 0
-         */
-        public static final String COLUMN_END_PRICE = "endPrice";
+        public static final String COLUMN_PRICE_RANGE = "priceRange";
         /**
          * Type: TEXT NOT NULL
          */
@@ -86,9 +82,21 @@ public class RecosContract {
          */
         public static final String COLUMN_LANDMARK = "landmark";
         /**
+         * Type: TEXT
+         */
+        public static final String COLUMN_DISPLAY_ADDRESS = "displayAddress";
+        /**
+         * Type: TEXT  ex- "37.2366851,-121.8308739"
+         */
+        public static final String COLUMN_LAT_LONG = "latLong";
+        /**
          * Type: TEXT NOT NULL
          */
         public static final String COLUMN_COUNTRY = "country";
+        /**
+         * Type: TEXT
+         */
+        public static final String COLUMN_IMAGE_URL = "imageUrl";
         /**
          * Type: BLOB
          */

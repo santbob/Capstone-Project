@@ -12,6 +12,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.letmeeat.letmeeat.models.Recommendation;
 import com.letmeeat.letmeeat.service.ApiService;
 
@@ -63,11 +64,17 @@ public class UpdaterService extends IntentService {
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.myjson.com/")
+                .baseUrl("https://8bf8c20a.ngrok.io/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
 
         ApiService service = retrofit.create(ApiService.class);
+
+//        RecoRequest recoRequest = new RecoRequest();
+//        recoRequest.setLocation("95123");
+//        recoRequest.setRadius(8047);
+//
+//        Call<List<Recommendation>> call = service.getRecommendations(recoRequest);
         Call<List<Recommendation>> call = service.getRecommendations();
 
         call.enqueue(new Callback<List<Recommendation>>() {
@@ -88,17 +95,17 @@ public class UpdaterService extends IntentService {
             public void onResponse(Call<List<Recommendation>> call, Response<List<Recommendation>> response) {
                 if (response.body() != null && response.body().size() > 0) {
                     List<Recommendation> recommendations = response.body();
+                    Gson gson = new Gson();
                     if (recommendations != null && recommendations.size() > 0) {
                         for (int i = 0; i < recommendations.size(); i++) {
                             Recommendation reco = recommendations.get(i);
                             ContentValues values = new ContentValues();
                             values.put(RecosContract.RecosEntry.COLUMN_RECO_ID, "lme_" + i);
                             values.put(RecosContract.RecosEntry.COLUMN_NAME, reco.getName());
-                            values.put(RecosContract.RecosEntry.COLUMN_CUISINE, reco.getCuisine());
+                            values.put(RecosContract.RecosEntry.COLUMN_CATEGORIES, gson.toJson(reco.getCategories()).getBytes());
                             values.put(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT, reco.getReviewsCount());
                             values.put(RecosContract.RecosEntry.COLUMN_RATINGS, reco.getRating());
-                            values.put(RecosContract.RecosEntry.COLUMN_START_PRICE, reco.getStartPrice());
-                            values.put(RecosContract.RecosEntry.COLUMN_END_PRICE, reco.getEndPrice());
+                            values.put(RecosContract.RecosEntry.COLUMN_PRICE_RANGE, reco.getPriceRange());
                             values.put(RecosContract.RecosEntry.COLUMN_CURRENCY, reco.getCurrency());
                             values.put(RecosContract.RecosEntry.COLUMN_PHONE, reco.getPhone());
                             values.put(RecosContract.RecosEntry.COLUMN_WEBSITE, reco.getWebsite());
@@ -108,7 +115,10 @@ public class UpdaterService extends IntentService {
                             values.put(RecosContract.RecosEntry.COLUMN_STATE, reco.getAddress().getState());
                             values.put(RecosContract.RecosEntry.COLUMN_ZIP, reco.getAddress().getZip());
                             values.put(RecosContract.RecosEntry.COLUMN_LANDMARK, reco.getAddress().getLandmark());
-                            values.put(RecosContract.RecosEntry.COLUMN_COUNTRY, "USA");
+                            values.put(RecosContract.RecosEntry.COLUMN_DISPLAY_ADDRESS, reco.getAddress().getDisplayAddress());
+                            values.put(RecosContract.RecosEntry.COLUMN_LAT_LONG, reco.getAddress().getCoordinates().getLatitude() + "," + reco.getAddress().getCoordinates().getLongitude());
+                            values.put(RecosContract.RecosEntry.COLUMN_COUNTRY, (TextUtils.isEmpty(reco.getAddress().getCountry())?  reco.getAddress().getCountry(): "US"));
+                            values.put(RecosContract.RecosEntry.COLUMN_IMAGE_URL, reco.getImageUrl());
                             values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(reco.getPhotos()));
                             cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
                         }

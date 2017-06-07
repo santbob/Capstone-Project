@@ -16,6 +16,9 @@ public class Address {
     private String city;
     private String state;
     private String zip;
+    private String country;
+    private String displayAddress;
+    private Coordinates coordinates;
     private String landmark;
 
     public String getStreetLine1() {
@@ -64,6 +67,30 @@ public class Address {
 
     public void setLandmark(String landmark) {
         this.landmark = landmark;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getDisplayAddress() {
+        return displayAddress;
+    }
+
+    public void setDisplayAddress(String displayAddress) {
+        this.displayAddress = displayAddress;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
     public String getPrintableAddress(String separter) {

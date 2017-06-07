@@ -10,15 +10,15 @@ import java.util.List;
 public class Recommendation {
 
     private String name;
-    private String cuisine;
+    private List<Category> categories;
     private int reviewsCount;
     private float rating;
-    private int startPrice;
-    private int endPrice;
+    private String priceRange;
     private String currency;
     private String phone;
     private String website;
     private Address address;
+    private String imageUrl;
     private List<String> photos;
 
     public Recommendation() {
@@ -33,12 +33,12 @@ public class Recommendation {
         this.name = name;
     }
 
-    public String getCuisine() {
-        return cuisine;
+    public List<Category> getCategories() {
+        return categories;
     }
 
-    public void setCuisine(String cuisine) {
-        this.cuisine = cuisine;
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     public int getReviewsCount() {
@@ -57,20 +57,12 @@ public class Recommendation {
         this.rating = rating;
     }
 
-    public int getStartPrice() {
-        return startPrice;
+    public String getPriceRange() {
+        return priceRange;
     }
 
-    public void setStartPrice(int startPrice) {
-        this.startPrice = startPrice;
-    }
-
-    public int getEndPrice() {
-        return endPrice;
-    }
-
-    public void setEndPrice(int endPrice) {
-        this.endPrice = endPrice;
+    public void setPriceRange(String priceRange) {
+        this.priceRange = priceRange;
     }
 
     public String getCurrency() {
@@ -105,6 +97,14 @@ public class Recommendation {
         this.website = website;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public List<String> getPhotos() {
         return photos;
     }
@@ -112,5 +112,4 @@ public class Recommendation {
     public void setPhotos(List<String> photos) {
         this.photos = photos;
     }
-
 }
