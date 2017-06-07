@@ -18,14 +18,19 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.letmeeat.letmeeat.adapters.PhotosAdapter;
 import com.letmeeat.letmeeat.db.RecosContract;
 import com.letmeeat.letmeeat.helpers.IntentHelper;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
 import com.letmeeat.letmeeat.models.Address;
+import com.letmeeat.letmeeat.models.Category;
 import com.letmeeat.letmeeat.views.DrawInsetsFrameLayout;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by santhosh on 04/04/2017.
@@ -52,6 +57,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
     private ImageView mPhotoView;
     private final boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
+    private Gson gson = new Gson();
 
     private IntentHelper intentHelper;
 
@@ -165,6 +171,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         TextView name = (TextView) mRootView.findViewById(R.id.reco_name);
         ImageView image = (ImageView) mRootView.findViewById(R.id.reco_image);
         TextView priceRange = (TextView) mRootView.findViewById(R.id.price_range);
+        TextView dotSeparator = (TextView) mRootView.findViewById(R.id.dot_separator);
         TextView reviewsCount = (TextView) mRootView.findViewById(R.id.reviews_count);
         ImageView ratingStar1 = (ImageView) mRootView.findViewById(R.id.rating_star_1);
         ImageView ratingStar2 = (ImageView) mRootView.findViewById(R.id.rating_star_2);
@@ -185,28 +192,23 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
             mRootView.animate().alpha(1);
             name.setText(mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_NAME)));
 
-            byte[] blob = mCursor.getBlob(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PICTURES));
-
-            String pictureBlob = new String(blob);
-            String[] pictures = pictureBlob.split(RecosContract.SPACE);
-
-            String pictureUrl = (pictures.length > 0) ? pictures[0].trim() : null;
-            if (!TextUtils.isEmpty(pictureUrl)) {
-                Picasso.with(getActivity()).load(pictureUrl)
+            String imageUrl = mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_IMAGE_URL));
+            if (!TextUtils.isEmpty(imageUrl)) {
+                Picasso.with(getActivity()).load(imageUrl)
                         .resize(200, 200)
                         .centerCrop()
                         .into(image);
-
-                updateMainPicture(pictureUrl);
+                updateMainPicture(imageUrl);
             }
 
+            byte[] blob = mCursor.getBlob(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PICTURES));
+            String pictureBlob = new String(blob);
+            String[] pictures = pictureBlob.split(RecosContract.SPACE);
             if (pictures.length > 1) {
                 picturesAdapter = new PhotosAdapter(getActivity(), pictures);
                 mPhotosGridView.setVisibility(View.VISIBLE);
                 mPhotosGridView.setAdapter(picturesAdapter);
                 picturesAdapter.notifyDataSetChanged();
-            } else {
-                mPhotosGridView.setVisibility(View.GONE);
             }
 
             reviewsCount.setText(getActivity().getString(R.string.reviews_count, mCursor.getInt(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT))));
@@ -218,13 +220,32 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
             ratingStar4.setImageResource(ratings >= 4 ? R.drawable.star : (ratings < 4 && ratings > 3) ? R.drawable.star_half : R.drawable.star_outline);
             ratingStar5.setImageResource(ratings == 5 ? R.drawable.star : (ratings < 5 && ratings > 4) ? R.drawable.star_half : R.drawable.star_outline);
 
-            priceRange.setText(getActivity().getString(R.string.pricerange, mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PRICE_RANGE))));
-            cuisine.setText(mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CATEGORIES)));
+            String price = mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PRICE_RANGE));
+            if (!TextUtils.isEmpty(price)) {
+                priceRange.setText(price);
+                dotSeparator.setVisibility(View.VISIBLE);
+            } else {
+                priceRange.setVisibility(View.GONE);
+                dotSeparator.setVisibility(View.GONE);
+            }
+
+            byte[] jsonBytes = mCursor.getBlob(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CATEGORIES));
+            String jsonStr = new String(jsonBytes);
+            ArrayList<Category> categories = gson.fromJson(jsonStr, new TypeToken<ArrayList<Category>>() {
+            }.getType());
+            String cuisines = null;
+            if (categories != null && categories.size() > 0) {
+                cuisines = categories.toString();
+                cuisines = cuisines.substring(1, cuisines.length() - 1);
+            }
+            if (cuisines != null) {
+                cuisine.setText(cuisines);
+            }
 
             Address addressObj = getPrintableAddress(mCursor);
             address.setText(addressObj.getPrintableAddress(null));
             final String printableAddress = addressObj.getPrintableAddress(Address.COMMA);
-            String mapUrl = getString(R.string.static_map_url, Utils.urlEncode(addressObj.getCity()), Utils.urlEncode(printableAddress), getResources().getConfiguration().screenWidthDp, 300);
+            String mapUrl = getString(R.string.static_map_url, Utils.urlEncode(addressObj.getCity()), Utils.urlEncode(printableAddress), getResources().getConfiguration().screenWidthDp, 150);
             mapView.loadUrl(mapUrl);
             mapView.setOnClickListener(new View.OnClickListener() {
                 @Override

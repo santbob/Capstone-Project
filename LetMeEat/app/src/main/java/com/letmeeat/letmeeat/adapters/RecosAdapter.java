@@ -106,13 +106,13 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         holder.name.setText(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_NAME)));
 
         String imageUrl = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_IMAGE_URL));
-
         if (!TextUtils.isEmpty(imageUrl)) {
             Picasso.with(activity).load(imageUrl)
                     .resize(200, 200)
                     .centerCrop()
                     .into(holder.image);
         }
+
         holder.reviewsCount.setText(activity.getString(R.string.reviews_count, cursor.getInt(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT))));
 
         float ratings = cursor.getFloat(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_RATINGS));
