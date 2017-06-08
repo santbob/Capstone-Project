@@ -21,7 +21,7 @@ class RecosDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + RecosContract.RecosEntry.TABLE_NAME + " ("
                 + RecosContract.RecosEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + RecosContract.RecosEntry.COLUMN_RECO_ID + " TEXT,"
+                + RecosContract.RecosEntry.COLUMN_ID + " TEXT,"
                 + RecosContract.RecosEntry.COLUMN_NAME + " TEXT NOT NULL,"
                 + RecosContract.RecosEntry.COLUMN_CATEGORIES + " BLOB NOT NULL,"
                 + RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT + " INTEGER NOT NULL DEFAULT 0,"

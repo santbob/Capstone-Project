@@ -9,6 +9,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * Created by santhosh on 16/11/2016.
@@ -21,4 +22,7 @@ public interface ApiService {
 
     @GET("v1/places")
     Call<List<Recommendation>> getRecommendations();
+
+    @GET("v1/business/{businessId}")
+    Call<Recommendation> getBusinessById(@Path("businessId") String businessId);
 }

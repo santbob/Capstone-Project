@@ -42,6 +42,12 @@ public class UpdaterService extends IntentService {
         super(TAG);
     }
 
+    private ApiService apiService;
+    // Don't even inspect the intent, we only do one thing, and that's fetch content.
+    private final ArrayList<ContentProviderOperation> cpo = new ArrayList<ContentProviderOperation>();
+
+    private final Uri dirUri = RecosContract.RecosEntry.CONTENT_URI;
+
     @Override
     protected void onHandleIntent(Intent intent) {
 
@@ -54,42 +60,28 @@ public class UpdaterService extends IntentService {
 
         sendStickyBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, true));
 
-        // Don't even inspect the intent, we only do one thing, and that's fetch content.
-        final ArrayList<ContentProviderOperation> cpo = new ArrayList<ContentProviderOperation>();
-
-        final Uri dirUri = RecosContract.RecosEntry.CONTENT_URI;
-
         // Delete all items
         cpo.add(ContentProviderOperation.newDelete(dirUri).build());
-
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://letmeeat-sdcnkphdnk.now.sh/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
 
-        ApiService service = retrofit.create(ApiService.class);
+        apiService = retrofit.create(ApiService.class);
 
-//        RecoRequest recoRequest = new RecoRequest();
+        getRecommendations();
+    }
+
+    private void getRecommendations(){
+        //        RecoRequest recoRequest = new RecoRequest();
 //        recoRequest.setLocation("95123");
 //        recoRequest.setRadius(8047);
 //
 //        Call<List<Recommendation>> call = service.getRecommendations(recoRequest);
-        Call<List<Recommendation>> call = service.getRecommendations();
+        Call<List<Recommendation>> call = apiService.getRecommendations();
 
         call.enqueue(new Callback<List<Recommendation>>() {
-            private String getSpaceSepartedString(List<String> stringList) {
-                StringBuilder builder = new StringBuilder();
-                if (stringList != null && stringList.size() > 0) {
-                    for (String text : stringList) {
-                        if (!TextUtils.isEmpty(text)) {
-                            builder.append(text);
-                            builder.append(RecosContract.SPACE);
-                        }
-                    }
-                }
-                return builder.toString().trim();
-            }
 
             @Override
             public void onResponse(Call<List<Recommendation>> call, Response<List<Recommendation>> response) {
@@ -100,7 +92,7 @@ public class UpdaterService extends IntentService {
                         for (int i = 0; i < recommendations.size(); i++) {
                             Recommendation reco = recommendations.get(i);
                             ContentValues values = new ContentValues();
-                            values.put(RecosContract.RecosEntry.COLUMN_RECO_ID, "lme_" + i);
+                            values.put(RecosContract.RecosEntry.COLUMN_ID, reco.getId());
                             values.put(RecosContract.RecosEntry.COLUMN_NAME, reco.getName());
                             values.put(RecosContract.RecosEntry.COLUMN_CATEGORIES, gson.toJson(reco.getCategories()).getBytes());
                             values.put(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT, reco.getReviewsCount());
@@ -121,6 +113,7 @@ public class UpdaterService extends IntentService {
                             values.put(RecosContract.RecosEntry.COLUMN_IMAGE_URL, reco.getImageUrl());
                             values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(reco.getPhotos()));
                             cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
+                            getBusiness(reco.getId(), i);
                         }
                         try {
                             getContentResolver().applyBatch(RecosContract.CONTENT_AUTHORITY, cpo);
@@ -138,5 +131,48 @@ public class UpdaterService extends IntentService {
                 sendStickyBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
             }
         });
+    }
+
+    private void getBusiness(String bizId, final long itemId){
+        final Call<Recommendation> call = apiService.getBusinessById(bizId);
+
+        call.enqueue(new Callback<Recommendation>() {
+
+            @Override
+            public void onResponse(Call<Recommendation> call, Response<Recommendation> response) {
+                if (response.body() != null ) {
+                    Recommendation recommendation = response.body();
+                    if (recommendation != null) {
+                        ContentValues values = new ContentValues();
+                        values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(recommendation.getPhotos()));
+                        values.put(RecosContract.RecosEntry.COLUMN_PRICE_RANGE, recommendation.getPriceRange());
+                        cpo.add(ContentProviderOperation.newUpdate(RecosContract.RecosEntry.buildItemUri(itemId)).withValues(values).build());
+                        try {
+                            getContentResolver().applyBatch(RecosContract.CONTENT_AUTHORITY, cpo);
+                        } catch (RemoteException | OperationApplicationException e) {
+                            //do nothing
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Recommendation> call, Throwable t) {
+                Log.d(TAG, t.toString());
+            }
+        });
+    }
+
+    private String getSpaceSepartedString(List<String> stringList) {
+        StringBuilder builder = new StringBuilder();
+        if (stringList != null && stringList.size() > 0) {
+            for (String text : stringList) {
+                if (!TextUtils.isEmpty(text)) {
+                    builder.append(text);
+                    builder.append(RecosContract.SPACE);
+                }
+            }
+        }
+        return builder.toString().trim();
     }
 }
