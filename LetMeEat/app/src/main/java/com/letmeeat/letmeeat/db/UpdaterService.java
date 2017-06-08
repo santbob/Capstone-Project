@@ -64,7 +64,7 @@ public class UpdaterService extends IntentService {
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://8bf8c20a.ngrok.io/")
+                .baseUrl("https://letmeeat-sdcnkphdnk.now.sh/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
 

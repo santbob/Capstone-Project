@@ -136,15 +136,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
 
     private void updateStatusBar() {
         int color = 0;
-//        if (mPhotoView != null && mTopInset != 0 && mScrollY > 0) {
-//            float f = progress(mScrollY,
-//                    mStatusBarFullOpacityBottom - mTopInset * 3,
-//                    mStatusBarFullOpacityBottom - mTopInset);
-//            color = Color.argb((int) (255 * f),
-//                    (int) (Color.red(mMutedColor) * 0.9),
-//                    (int) (Color.green(mMutedColor) * 0.9),
-//                    (int) (Color.blue(mMutedColor) * 0.9));
-//        }
         mStatusBarColorDrawable.setColor(color);
         mDrawInsetsFrameLayout.setInsetBackground(mStatusBarColorDrawable);
     }
@@ -206,7 +197,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
             String[] pictures = pictureBlob.split(RecosContract.SPACE);
             if (pictures.length > 1) {
                 picturesAdapter = new PhotosAdapter(getActivity(), pictures);
-                mPhotosGridView.setVisibility(View.VISIBLE);
                 mPhotosGridView.setAdapter(picturesAdapter);
                 picturesAdapter.notifyDataSetChanged();
             }
