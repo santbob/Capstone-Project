@@ -64,7 +64,7 @@ public class UpdaterService extends IntentService {
         cpo.add(ContentProviderOperation.newDelete(dirUri).build());
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://letmeeat-sdcnkphdnk.now.sh/")
+                .baseUrl("https://letmeeat-dhwrnclhhh.now.sh/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
 
@@ -89,7 +89,6 @@ public class UpdaterService extends IntentService {
                     List<Recommendation> recommendations = response.body();
                     Gson gson = new Gson();
                     if (recommendations != null && recommendations.size() > 0) {
-                        String[] businesses = new String[recommendations.size()];
                         for (int i = 0; i < recommendations.size(); i++) {
                             Recommendation reco = recommendations.get(i);
                             ContentValues values = new ContentValues();
@@ -114,14 +113,12 @@ public class UpdaterService extends IntentService {
                             values.put(RecosContract.RecosEntry.COLUMN_IMAGE_URL, reco.getImageUrl());
                             values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(reco.getPhotos()));
                             cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
-                            businesses[i] = reco.getId();
                         }
                         try {
                             getContentResolver().applyBatch(RecosContract.CONTENT_AUTHORITY, cpo);
                         } catch (RemoteException | OperationApplicationException e) {
                             //do nothing
                         }
-                        getBusinesses(businesses);
                     }
                 }
                 sendStickyBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
@@ -131,41 +128,6 @@ public class UpdaterService extends IntentService {
             public void onFailure(Call<List<Recommendation>> call, Throwable t) {
                 Log.d(TAG, t.toString());
                 sendStickyBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
-            }
-        });
-    }
-
-    private void getBusinesses(String[] businesses) {
-        for (int i = 0; i < businesses.length; i++) {
-            getBusiness(businesses[i], i + 1);
-        }
-    }
-
-    private void getBusiness(final String bizId, final long itemId) {
-        final Call<Recommendation> call = apiService.getBusinessById(bizId);
-
-        call.enqueue(new Callback<Recommendation>() {
-
-            @Override
-            public void onResponse(Call<Recommendation> call, Response<Recommendation> response) {
-                if (response.body() != null) {
-                    Recommendation recommendation = response.body();
-                    if (recommendation != null) {
-                        ContentValues values = new ContentValues();
-                        values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(recommendation.getPhotos()));
-                        values.put(RecosContract.RecosEntry.COLUMN_PRICE_RANGE, recommendation.getPriceRange());
-                        try {
-                            getContentResolver().update(RecosContract.RecosEntry.buildItemUri(itemId), values, RecosContract.RecosEntry.COLUMN_RECO_ID + "=?", new String[]{recommendation.getId()});
-                        } catch (NullPointerException e) {
-                            //do nothing
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Recommendation> call, Throwable t) {
-                Log.d(TAG, t.toString());
             }
         });
     }
