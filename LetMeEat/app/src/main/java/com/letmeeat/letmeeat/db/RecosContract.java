@@ -24,7 +24,7 @@ public class RecosContract {
         /**
          * Type: TEXT
          */
-        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_RECO_ID = "recoId";
         /**
          * Type: TEXT NOT NULL
          */

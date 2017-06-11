@@ -73,7 +73,7 @@ public class UpdaterService extends IntentService {
         getRecommendations();
     }
 
-    private void getRecommendations(){
+    private void getRecommendations() {
         //        RecoRequest recoRequest = new RecoRequest();
 //        recoRequest.setLocation("95123");
 //        recoRequest.setRadius(8047);
@@ -89,10 +89,11 @@ public class UpdaterService extends IntentService {
                     List<Recommendation> recommendations = response.body();
                     Gson gson = new Gson();
                     if (recommendations != null && recommendations.size() > 0) {
+                        String[] businesses = new String[recommendations.size()];
                         for (int i = 0; i < recommendations.size(); i++) {
                             Recommendation reco = recommendations.get(i);
                             ContentValues values = new ContentValues();
-                            values.put(RecosContract.RecosEntry.COLUMN_ID, reco.getId());
+                            values.put(RecosContract.RecosEntry.COLUMN_RECO_ID, reco.getId());
                             values.put(RecosContract.RecosEntry.COLUMN_NAME, reco.getName());
                             values.put(RecosContract.RecosEntry.COLUMN_CATEGORIES, gson.toJson(reco.getCategories()).getBytes());
                             values.put(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT, reco.getReviewsCount());
@@ -109,17 +110,18 @@ public class UpdaterService extends IntentService {
                             values.put(RecosContract.RecosEntry.COLUMN_LANDMARK, reco.getAddress().getLandmark());
                             values.put(RecosContract.RecosEntry.COLUMN_DISPLAY_ADDRESS, reco.getAddress().getDisplayAddress());
                             values.put(RecosContract.RecosEntry.COLUMN_LAT_LONG, reco.getAddress().getCoordinates().getLatitude() + "," + reco.getAddress().getCoordinates().getLongitude());
-                            values.put(RecosContract.RecosEntry.COLUMN_COUNTRY, (TextUtils.isEmpty(reco.getAddress().getCountry())?  reco.getAddress().getCountry(): "US"));
+                            values.put(RecosContract.RecosEntry.COLUMN_COUNTRY, (TextUtils.isEmpty(reco.getAddress().getCountry()) ? reco.getAddress().getCountry() : "US"));
                             values.put(RecosContract.RecosEntry.COLUMN_IMAGE_URL, reco.getImageUrl());
                             values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(reco.getPhotos()));
                             cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
-                            getBusiness(reco.getId(), i);
+                            businesses[i] = reco.getId();
                         }
                         try {
                             getContentResolver().applyBatch(RecosContract.CONTENT_AUTHORITY, cpo);
                         } catch (RemoteException | OperationApplicationException e) {
                             //do nothing
                         }
+                        getBusinesses(businesses);
                     }
                 }
                 sendStickyBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
@@ -133,23 +135,28 @@ public class UpdaterService extends IntentService {
         });
     }
 
-    private void getBusiness(String bizId, final long itemId){
+    private void getBusinesses(String[] businesses) {
+        for (int i = 0; i < businesses.length; i++) {
+            getBusiness(businesses[i], i + 1);
+        }
+    }
+
+    private void getBusiness(final String bizId, final long itemId) {
         final Call<Recommendation> call = apiService.getBusinessById(bizId);
 
         call.enqueue(new Callback<Recommendation>() {
 
             @Override
             public void onResponse(Call<Recommendation> call, Response<Recommendation> response) {
-                if (response.body() != null ) {
+                if (response.body() != null) {
                     Recommendation recommendation = response.body();
                     if (recommendation != null) {
                         ContentValues values = new ContentValues();
                         values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(recommendation.getPhotos()));
                         values.put(RecosContract.RecosEntry.COLUMN_PRICE_RANGE, recommendation.getPriceRange());
-                        cpo.add(ContentProviderOperation.newUpdate(RecosContract.RecosEntry.buildItemUri(itemId)).withValues(values).build());
                         try {
-                            getContentResolver().applyBatch(RecosContract.CONTENT_AUTHORITY, cpo);
-                        } catch (RemoteException | OperationApplicationException e) {
+                            getContentResolver().update(RecosContract.RecosEntry.buildItemUri(itemId), values, RecosContract.RecosEntry.COLUMN_RECO_ID + "=?", new String[]{recommendation.getId()});
+                        } catch (NullPointerException e) {
                             //do nothing
                         }
                     }
