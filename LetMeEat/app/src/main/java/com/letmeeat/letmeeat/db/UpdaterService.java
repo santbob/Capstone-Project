@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.letmeeat.letmeeat.models.RecoRequest;
 import com.letmeeat.letmeeat.models.Recommendation;
 import com.letmeeat.letmeeat.service.ApiService;
 
@@ -64,7 +65,7 @@ public class UpdaterService extends IntentService {
         cpo.add(ContentProviderOperation.newDelete(dirUri).build());
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://letmeeat-dhwrnclhhh.now.sh/")
+                .baseUrl("https://letmeeat-xvmflwigqc.now.sh/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
 
@@ -74,12 +75,12 @@ public class UpdaterService extends IntentService {
     }
 
     private void getRecommendations() {
-        //        RecoRequest recoRequest = new RecoRequest();
-//        recoRequest.setLocation("95123");
-//        recoRequest.setRadius(8047);
-//
-//        Call<List<Recommendation>> call = service.getRecommendations(recoRequest);
-        Call<List<Recommendation>> call = apiService.getRecommendations();
+        RecoRequest recoRequest = new RecoRequest();
+        recoRequest.setLocation("95131");
+        recoRequest.setRadius(8047);
+        recoRequest.setLimit(4);
+
+        Call<List<Recommendation>> call = apiService.getRecommendations(recoRequest);
 
         call.enqueue(new Callback<List<Recommendation>>() {
 
@@ -91,28 +92,30 @@ public class UpdaterService extends IntentService {
                     if (recommendations != null && recommendations.size() > 0) {
                         for (int i = 0; i < recommendations.size(); i++) {
                             Recommendation reco = recommendations.get(i);
-                            ContentValues values = new ContentValues();
-                            values.put(RecosContract.RecosEntry.COLUMN_RECO_ID, reco.getId());
-                            values.put(RecosContract.RecosEntry.COLUMN_NAME, reco.getName());
-                            values.put(RecosContract.RecosEntry.COLUMN_CATEGORIES, gson.toJson(reco.getCategories()).getBytes());
-                            values.put(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT, reco.getReviewsCount());
-                            values.put(RecosContract.RecosEntry.COLUMN_RATINGS, reco.getRating());
-                            values.put(RecosContract.RecosEntry.COLUMN_PRICE_RANGE, reco.getPriceRange());
-                            values.put(RecosContract.RecosEntry.COLUMN_CURRENCY, reco.getCurrency());
-                            values.put(RecosContract.RecosEntry.COLUMN_PHONE, reco.getPhone());
-                            values.put(RecosContract.RecosEntry.COLUMN_WEBSITE, reco.getWebsite());
-                            values.put(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_1, reco.getAddress().getStreetLine1());
-                            values.put(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_2, reco.getAddress().getStreetLine2());
-                            values.put(RecosContract.RecosEntry.COLUMN_CITY, reco.getAddress().getCity());
-                            values.put(RecosContract.RecosEntry.COLUMN_STATE, reco.getAddress().getState());
-                            values.put(RecosContract.RecosEntry.COLUMN_ZIP, reco.getAddress().getZip());
-                            values.put(RecosContract.RecosEntry.COLUMN_LANDMARK, reco.getAddress().getLandmark());
-                            values.put(RecosContract.RecosEntry.COLUMN_DISPLAY_ADDRESS, reco.getAddress().getDisplayAddress());
-                            values.put(RecosContract.RecosEntry.COLUMN_LAT_LONG, reco.getAddress().getCoordinates().getLatitude() + "," + reco.getAddress().getCoordinates().getLongitude());
-                            values.put(RecosContract.RecosEntry.COLUMN_COUNTRY, (TextUtils.isEmpty(reco.getAddress().getCountry()) ? reco.getAddress().getCountry() : "US"));
-                            values.put(RecosContract.RecosEntry.COLUMN_IMAGE_URL, reco.getImageUrl());
-                            values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(reco.getPhotos()));
-                            cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
+                            if (reco != null) {
+                                ContentValues values = new ContentValues();
+                                values.put(RecosContract.RecosEntry.COLUMN_RECO_ID, reco.getId());
+                                values.put(RecosContract.RecosEntry.COLUMN_NAME, reco.getName());
+                                values.put(RecosContract.RecosEntry.COLUMN_CATEGORIES, gson.toJson(reco.getCategories()).getBytes());
+                                values.put(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT, reco.getReviewsCount());
+                                values.put(RecosContract.RecosEntry.COLUMN_RATINGS, reco.getRating());
+                                values.put(RecosContract.RecosEntry.COLUMN_PRICE_RANGE, reco.getPriceRange());
+                                values.put(RecosContract.RecosEntry.COLUMN_CURRENCY, reco.getCurrency());
+                                values.put(RecosContract.RecosEntry.COLUMN_PHONE, reco.getPhone());
+                                values.put(RecosContract.RecosEntry.COLUMN_WEBSITE, reco.getWebsite());
+                                values.put(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_1, reco.getAddress().getStreetLine1());
+                                values.put(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_2, reco.getAddress().getStreetLine2());
+                                values.put(RecosContract.RecosEntry.COLUMN_CITY, reco.getAddress().getCity());
+                                values.put(RecosContract.RecosEntry.COLUMN_STATE, reco.getAddress().getState());
+                                values.put(RecosContract.RecosEntry.COLUMN_ZIP, reco.getAddress().getZip());
+                                values.put(RecosContract.RecosEntry.COLUMN_LANDMARK, reco.getAddress().getLandmark());
+                                values.put(RecosContract.RecosEntry.COLUMN_DISPLAY_ADDRESS, reco.getAddress().getDisplayAddress());
+                                values.put(RecosContract.RecosEntry.COLUMN_LAT_LONG, reco.getAddress().getCoordinates().getLatitude() + "," + reco.getAddress().getCoordinates().getLongitude());
+                                values.put(RecosContract.RecosEntry.COLUMN_COUNTRY, (TextUtils.isEmpty(reco.getAddress().getCountry()) ? reco.getAddress().getCountry() : "US"));
+                                values.put(RecosContract.RecosEntry.COLUMN_IMAGE_URL, reco.getImageUrl());
+                                values.put(RecosContract.RecosEntry.COLUMN_PICTURES, getSpaceSepartedString(reco.getPhotos()));
+                                cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
+                            }
                         }
                         try {
                             getContentResolver().applyBatch(RecosContract.CONTENT_AUTHORITY, cpo);
