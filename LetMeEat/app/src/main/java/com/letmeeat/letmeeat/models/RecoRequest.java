@@ -2,6 +2,7 @@ package com.letmeeat.letmeeat.models;
 
 /**
  * Created by santhosh on 27/05/2017.
+ * The Request body of the places request
  */
 
 public class RecoRequest {
@@ -9,6 +10,9 @@ public class RecoRequest {
     private String location;
     private int radius;
     private int limit;
+    private String categories;
+    private String ignore;
+    private float minRating;
 
     public String getLocation() {
         return location;
@@ -32,5 +36,29 @@ public class RecoRequest {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public String getCategories() {
+        return categories;
+    }
+
+    public void setCategories(String categories) {
+        this.categories = categories;
+    }
+
+    public String getIgnore() {
+        return ignore;
+    }
+
+    public void setIgnore(String ignore) {
+        this.ignore = ignore;
+    }
+
+    public float getMinRating() {
+        return minRating;
+    }
+
+    public void setMinRating(float minRating) {
+        this.minRating = minRating;
     }
 }
