@@ -65,7 +65,7 @@ public class UpdaterService extends IntentService {
         cpo.add(ContentProviderOperation.newDelete(dirUri).build());
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://letmeeat-olyflzcofl.now.sh/")
+                .baseUrl("https://letmeeat-yrtqksqloo.now.sh/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
 
