@@ -11,7 +11,7 @@ import java.util.List;
 public class Preferences {
 
     private float minimumRatings;
-    private List<String> preferedCuisines = new ArrayList<String>();
+    private List<Category> preferedCuisines = new ArrayList<Category>();
 
     public float getMinimumRatings() {
         return minimumRatings;
@@ -21,11 +21,11 @@ public class Preferences {
         this.minimumRatings = minimumRatings;
     }
 
-    public List<String> getPreferedCuisines() {
+    public List<Category> getPreferedCuisines() {
         return preferedCuisines;
     }
 
-    public void setPreferedCuisines(List<String> preferedCuisines) {
+    public void setPreferedCuisines(List<Category> preferedCuisines) {
         this.preferedCuisines = preferedCuisines;
     }
 }

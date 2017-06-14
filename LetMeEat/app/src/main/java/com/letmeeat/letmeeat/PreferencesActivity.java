@@ -35,14 +35,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.letmeeat.letmeeat.helpers.CircleTransform;
+import com.letmeeat.letmeeat.helpers.Utils;
+import com.letmeeat.letmeeat.models.Category;
 import com.letmeeat.letmeeat.models.Preferences;
+import com.letmeeat.letmeeat.service.ApiService;
 import com.letmeeat.letmeeat.views.TagView;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
 /**
  * Created by santhosh on 20/10/2016.
@@ -53,13 +63,16 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
 
     private final String TAG = getClass().getSimpleName();
 
-    private final String[] cuisines = new String[]{
-            "Meditranean", "Italian", "Indian", "Chineese", "American"
-    };
+//    private final String[] cuisines = new String[]{
+//            "Meditranean", "Italian", "Indian", "Chineese", "American"
+//    };
 
+    private List<Category> categories;
     private DatabaseReference preferencesDBRef;
-    private final List<String> cuisinePref = new ArrayList<String>();
+   // private List<Category> categoryPrefList = new ArrayList<Category>();
+    private Map<String, Category> categoryMap = new HashMap<String, Category>();
     private Preferences preferencesModel;
+    private ArrayAdapter<Category> adapter;
 
 
     private EditText minRatingsTextView;
@@ -82,7 +95,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        getCategories();
         firebaseAuth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -138,18 +151,19 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         profileImage = (ImageView) findViewById(R.id.profile_image);
         minRatingsTextView = (EditText) findViewById(R.id.pref_minimum_ratings);
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, cuisines);
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.pref_cuisine_lookup);
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View arg1, int pos, long id) {
-                addCuisine2Preference(adapter.getItem(pos));
-                autoCompleteTextView.setText("");
+                if (adapter != null) {
+                    Category category = adapter.getItem(pos);
+                    if (category != null) {
+                        addCuisine2Preference(category);
+                        autoCompleteTextView.setText("");
+                    }
+                }
             }
         });
-        autoCompleteTextView.setAdapter(adapter);
-        autoCompleteTextView.setThreshold(0);
 
         selectedCuisinesLayout = (FlexboxLayout) findViewById(R.id.selected_cuisines);
 
@@ -197,9 +211,37 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
                 });
     }
 
-    private void addCuisineTag(String cuisine) {
+    private void getCategories() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Utils.API_URL)
+                .addConverterFactory(MoshiConverterFactory.create())
+                .build();
+
+        ApiService apiService = retrofit.create(ApiService.class);
+        Call<List<Category>> call = apiService.getCategories("US");
+        call.enqueue(new Callback<List<Category>>() {
+
+            @Override
+            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                if (response.body() != null && response.body().size() > 0) {
+                    categories = response.body();
+                    adapter = new ArrayAdapter<Category>(PreferencesActivity.this,
+                            android.R.layout.simple_dropdown_item_1line, categories);
+                    autoCompleteTextView.setAdapter(adapter);
+                    autoCompleteTextView.setThreshold(0);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable t) {
+                Log.d(TAG, t.toString());
+            }
+        });
+    }
+
+    private void addCategoryTagView(Category category) {
         TagView tagView = new TagView(this);
-        tagView.build(cuisine, cuisine, this);
+        tagView.build(category.getTitle(), category.getAlias(), this);
         selectedCuisinesLayout.addView(tagView);
     }
 
@@ -209,7 +251,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         }
         //FIXME: prone to number format exception, fix this
         preferencesModel.setMinimumRatings(Float.valueOf(minRatingsTextView.getText().toString()));
-        preferencesModel.setPreferedCuisines(cuisinePref);
+        preferencesModel.setPreferedCuisines((List<Category>)categoryMap.values());
 
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<Preferences> jsonAdapter = moshi.adapter(Preferences.class);
@@ -218,18 +260,20 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         preferencesDBRef.setValue(json);
     }
 
-    private void addCuisine2Preference(String cuisine) {
-        if (cuisinePref.indexOf(cuisine) < 0) {
-            cuisinePref.add(cuisine);
-            addCuisineTag(cuisine);
+    private void addCuisine2Preference(Category category) {
+        if (!categoryMap.containsKey(category.getAlias())) {
+            //categoryPrefList.add(category);
+            categoryMap.put(category.getAlias(), category);
+            addCategoryTagView(category);
         }
     }
 
     @Override
     public void onTagDelete(TagView view) {
-        int index = cuisinePref.indexOf(view.getValue());
-        if (index >= 0) {
-            cuisinePref.remove(index);
+
+        if (categoryMap.containsKey(view.getValue())) {
+            //categoryPrefList.remove(index);
+            categoryMap.remove(view.getValue());
             selectedCuisinesLayout.removeView(view);
         }
     }
@@ -249,8 +293,8 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
                         preferencesModel = jsonAdapter.fromJson(prefJson);
                         if (preferencesModel != null) {
                             if (preferencesModel.getPreferedCuisines() != null) {
-                                for (String cuisine : preferencesModel.getPreferedCuisines()) {
-                                    addCuisine2Preference(cuisine);
+                                for (Category category : preferencesModel.getPreferedCuisines()) {
+                                    addCuisine2Preference(category);
                                 }
                             }
                             if (preferencesModel.getMinimumRatings() > 0) {

@@ -17,4 +17,6 @@ public class Utils {
             throw new IllegalArgumentException("failed to encode", e);
         }
     }
+
+    public static String API_URL = "https://letmeeat-jamtydtnbm.now.sh/";
 }

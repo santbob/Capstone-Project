@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.models.RecoRequest;
 import com.letmeeat.letmeeat.models.Recommendation;
 import com.letmeeat.letmeeat.service.ApiService;
@@ -65,7 +66,7 @@ public class UpdaterService extends IntentService {
         cpo.add(ContentProviderOperation.newDelete(dirUri).build());
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://letmeeat-yrtqksqloo.now.sh/")
+                .baseUrl(Utils.API_URL)
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
 

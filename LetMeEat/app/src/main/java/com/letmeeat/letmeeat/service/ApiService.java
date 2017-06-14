@@ -1,5 +1,6 @@
 package com.letmeeat.letmeeat.service;
 
+import com.letmeeat.letmeeat.models.Category;
 import com.letmeeat.letmeeat.models.RecoRequest;
 import com.letmeeat.letmeeat.models.Recommendation;
 
@@ -20,9 +21,6 @@ public interface ApiService {
     @POST("v1/places")
     Call<List<Recommendation>> getRecommendations(@Body RecoRequest requestbody);
 
-    @GET("v1/places")
-    Call<List<Recommendation>> getRecommendations();
-
-    @GET("v1/business/{businessId}")
-    Call<Recommendation> getBusinessById(@Path("businessId") String businessId);
+    @GET("v1/categories/{country}")
+    Call<List<Category>> getCategories(@Path("country") String countryCode);
 }
