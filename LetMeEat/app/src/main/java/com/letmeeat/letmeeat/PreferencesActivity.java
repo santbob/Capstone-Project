@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -63,15 +64,9 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
 
     private final String TAG = getClass().getSimpleName();
 
-//    private final String[] cuisines = new String[]{
-//            "Meditranean", "Italian", "Indian", "Chineese", "American"
-//    };
-
-    private List<Category> categories;
+    private List<Category> autoCompleteCategoriesList;
     private DatabaseReference preferencesDBRef;
-   // private List<Category> categoryPrefList = new ArrayList<Category>();
     private Map<String, Category> categoryMap = new HashMap<String, Category>();
-    private Preferences preferencesModel;
     private ArrayAdapter<Category> adapter;
 
 
@@ -112,7 +107,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
                                 .centerCrop()
                                 .into(profileImage);
                     }
-                    //readPreferences();
+                    getStoredPreferencesFromFirebase();
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -146,7 +141,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         preferencesDBRef = database.getReference("preferences");
-        preferencesModel = new Preferences();
+        //preferencesModel = new Preferences();
 
         profileImage = (ImageView) findViewById(R.id.profile_image);
         minRatingsTextView = (EditText) findViewById(R.id.pref_minimum_ratings);
@@ -224,17 +219,19 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
             @Override
             public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
                 if (response.body() != null && response.body().size() > 0) {
-                    categories = response.body();
+                    autoCompleteCategoriesList = response.body();
                     adapter = new ArrayAdapter<Category>(PreferencesActivity.this,
-                            android.R.layout.simple_dropdown_item_1line, categories);
+                            android.R.layout.simple_dropdown_item_1line, autoCompleteCategoriesList);
                     autoCompleteTextView.setAdapter(adapter);
                     autoCompleteTextView.setThreshold(0);
                 }
+                loadStoredPreferences();
             }
 
             @Override
             public void onFailure(Call<List<Category>> call, Throwable t) {
                 Log.d(TAG, t.toString());
+                loadStoredPreferences();
             }
         });
     }
@@ -246,23 +243,37 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
     }
 
     private void savePreferences() {
-        if (preferencesModel == null) {
-            preferencesModel = new Preferences();
+        float minRatings = 0;
+        try {
+            minRatings = Float.valueOf(minRatingsTextView.getText().toString());
+        } catch (NumberFormatException e) {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    PreferencesActivity.this);
+            alertDialogBuilder.setTitle(R.string.error);
+            alertDialogBuilder.setMessage(R.string.invalid_min_rating);
+            return;
         }
-        //FIXME: prone to number format exception, fix this
-        preferencesModel.setMinimumRatings(Float.valueOf(minRatingsTextView.getText().toString()));
-        preferencesModel.setPreferedCuisines((List<Category>)categoryMap.values());
 
-        Moshi moshi = new Moshi.Builder().build();
-        JsonAdapter<Preferences> jsonAdapter = moshi.adapter(Preferences.class);
 
-        String json = jsonAdapter.toJson(preferencesModel);
-        preferencesDBRef.setValue(json);
+        Preferences preferencesModel = new Preferences();
+        preferencesModel.setMinimumRatings(minRatings);
+        if (categoryMap.size() > 0) {
+            preferencesModel.setCategories(categoryMap);
+        }
+
+        if (firebaseAuth.getCurrentUser() != null) {
+            Moshi moshi = new Moshi.Builder().build();
+            JsonAdapter<Preferences> jsonAdapter = moshi.adapter(Preferences.class);
+            String json = jsonAdapter.toJson(preferencesModel);
+            preferencesDBRef.setValue(json);
+        }
+
+        storePreferences(preferencesModel);
+        onBackPressed();
     }
 
     private void addCuisine2Preference(Category category) {
         if (!categoryMap.containsKey(category.getAlias())) {
-            //categoryPrefList.add(category);
             categoryMap.put(category.getAlias(), category);
             addCategoryTagView(category);
         }
@@ -270,15 +281,13 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
 
     @Override
     public void onTagDelete(TagView view) {
-
         if (categoryMap.containsKey(view.getValue())) {
-            //categoryPrefList.remove(index);
             categoryMap.remove(view.getValue());
             selectedCuisinesLayout.removeView(view);
         }
     }
 
-    private void readPreferences() {
+    private void getStoredPreferencesFromFirebase() {
         showProgressDialog(null, null);
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -290,24 +299,12 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
                     JsonAdapter<Preferences> jsonAdapter = moshi.adapter(Preferences.class);
 
                     if (prefJson != null) {
-                        preferencesModel = jsonAdapter.fromJson(prefJson);
-                        if (preferencesModel != null) {
-                            if (preferencesModel.getPreferedCuisines() != null) {
-                                for (Category category : preferencesModel.getPreferedCuisines()) {
-                                    addCuisine2Preference(category);
-                                }
-                            }
-                            if (preferencesModel.getMinimumRatings() > 0) {
-                                minRatingsTextView.setText(getString(R.string.float_placeholder, preferencesModel.getMinimumRatings()));
-                            }
-                        }
+                        Preferences preferencesModel = jsonAdapter.fromJson(prefJson);
+                        updatePreferenceUI(preferencesModel);
                     }
                 } catch (Exception e) {
                     Log.d(TAG, "Exception occcured " + e.toString());
                 } finally {
-                    minRatingsTextView.setVisibility(View.VISIBLE);
-                    autoCompleteTextView.setVisibility(View.VISIBLE);
-                    selectedCuisinesLayout.setVisibility(View.VISIBLE);
                     hideProgressDialog();
                 }
             }
@@ -326,6 +323,46 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         fbCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void loadStoredPreferences() {
+        if (firebaseAuth.getCurrentUser() != null) {
+            getStoredPreferencesFromFirebase();
+        } else {
+            getStoredPreferences();
+        }
+    }
+
+    private void updatePreferenceUI(Preferences preferencesModel) {
+        if (preferencesModel != null) {
+            if (preferencesModel.getCategories() != null) {
+                for (Category category : preferencesModel.getCategories().values()) {
+                    addCuisine2Preference(category);
+                }
+            }
+            if (preferencesModel.getMinimumRatings() > 0) {
+                minRatingsTextView.setText(getString(R.string.float_placeholder, preferencesModel.getMinimumRatings()));
+            }
+        }
+    }
+
+    private void storePreferences(Preferences preferences) {
+        Utils.setSharedPrefString(getApplicationContext(), Utils.CATEGORIES, preferences.getCategoriesAlias());
+        Utils.setSharedPrefFloat(getApplicationContext(), Utils.MIN_RATINGS, preferences.getMinimumRatings());
+    }
+
+    private void getStoredPreferences() {
+        Preferences preferences = new Preferences();
+        preferences.setMinimumRatings(Utils.getSharedPrefFloat(getApplicationContext(), Utils.MIN_RATINGS));
+        String cats = Utils.getSharedPrefString(getApplicationContext(), Utils.CATEGORIES);
+        Map<String, Category> catsMap = new HashMap<String, Category>();
+        for (Category cat : autoCompleteCategoriesList) {
+            if (cats.contains(cat.getAlias())) {
+                catsMap.put(cat.getAlias(), cat);
+            }
+        }
+        preferences.setCategories(catsMap);
+        updatePreferenceUI(preferences);
     }
 }
 

@@ -1,7 +1,8 @@
 package com.letmeeat.letmeeat.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by santhosh on 23/10/2016.
@@ -11,7 +12,7 @@ import java.util.List;
 public class Preferences {
 
     private float minimumRatings;
-    private List<Category> preferedCuisines = new ArrayList<Category>();
+    private Map<String, Category> categories = new HashMap<String, Category>();
 
     public float getMinimumRatings() {
         return minimumRatings;
@@ -21,11 +22,23 @@ public class Preferences {
         this.minimumRatings = minimumRatings;
     }
 
-    public List<Category> getPreferedCuisines() {
-        return preferedCuisines;
+    public Map<String, Category> getCategories() {
+        return categories;
     }
 
-    public void setPreferedCuisines(List<Category> preferedCuisines) {
-        this.preferedCuisines = preferedCuisines;
+    public void setCategories(Map<String, Category> categories) {
+        this.categories = categories;
+    }
+
+    public String getCategoriesAlias() {
+        String alias = "";
+        for (Iterator<Category> iterator = categories.values().iterator(); iterator.hasNext(); ) {
+            Category cat = iterator.next();
+            alias += cat.getAlias();
+            if (iterator.hasNext()) {
+                alias += ",";
+            }
+        }
+        return alias;
     }
 }

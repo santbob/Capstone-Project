@@ -26,7 +26,7 @@ class RecosDbHelper extends SQLiteOpenHelper {
                 + RecosContract.RecosEntry.COLUMN_CATEGORIES + " BLOB NOT NULL,"
                 + RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT + " INTEGER NOT NULL DEFAULT 0,"
                 + RecosContract.RecosEntry.COLUMN_RATINGS + " REAL NOT NULL DEFAULT 0,"
-                + RecosContract.RecosEntry.COLUMN_PRICE_RANGE + " TEXT NOT NULL,"
+                + RecosContract.RecosEntry.COLUMN_PRICE_RANGE + " TEXT,"
                 + RecosContract.RecosEntry.COLUMN_CURRENCY + " TEXT NOT NULL DEFAULT USD,"
                 + RecosContract.RecosEntry.COLUMN_PHONE + " TEXT NOT NULL,"
                 + RecosContract.RecosEntry.COLUMN_WEBSITE + " TEXT,"
