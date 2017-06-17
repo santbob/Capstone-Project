@@ -17,6 +17,7 @@ public class Utils {
 
     public static final String MIN_RATINGS = "MIN_RATINGS";
     public static final String CATEGORIES = "CATEGORIES";
+    public static final String PREF_MODIFIED = "PREF_MODIFIED";
 
 
     public static String urlEncode(String str) {
@@ -55,6 +56,19 @@ public class Utils {
     public static String getSharedPrefString(Context context, String key) {
         SharedPreferences sp = getSharedPreferences(context);
         return (sp != null) ? sp.getString(key, "") : "";
+    }
+
+    public static void setSharedPrefBoolean(Context context, String key, boolean value) {
+        SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
+        if (editor != null) {
+            editor.putBoolean(key, value);
+            editor.apply();
+        }
+    }
+
+    public static boolean getSharedPrefBoolean(Context context, String key) {
+        SharedPreferences sp = getSharedPreferences(context);
+        return (sp != null) && sp.getBoolean(key, false);
     }
 
     public static void setSharedPrefFloat(Context context, String key, float value) {

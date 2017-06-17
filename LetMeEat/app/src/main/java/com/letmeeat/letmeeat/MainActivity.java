@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.letmeeat.letmeeat.adapters.RecosAdapter;
 import com.letmeeat.letmeeat.db.RecosContract;
 import com.letmeeat.letmeeat.db.UpdaterService;
+import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
 
 public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -132,6 +133,15 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Utils.getSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED)) {
+            refresh();
+            Utils.setSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED, false);
+        }
+    }
+
     private boolean mIsRefreshing = false;
 
     private final BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
@@ -173,6 +183,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     }
 
     private void refresh() {
+        recomendationsListView.setAdapter(null);
         startService(new Intent(this, UpdaterService.class));
     }
 

@@ -269,6 +269,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         }
 
         storePreferences(preferencesModel);
+        Utils.setSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED, true);
         onBackPressed();
     }
 
