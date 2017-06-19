@@ -6,11 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.flexbox.FlexboxLayout;
@@ -96,15 +97,6 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         });
 
         selectedCuisinesLayout = (FlexboxLayout) findViewById(R.id.selected_cuisines);
-
-        Button savePreferences = (Button) findViewById(R.id.pref_save);
-        savePreferences.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //save preferences
-                savePreferences();
-            }
-        });
     }
 
     @Override
@@ -121,6 +113,24 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         }
         hideProgressDialog();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.prefs, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_save) {
+            savePreferences();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void getCategories() {
         Retrofit retrofit = new Retrofit.Builder()
