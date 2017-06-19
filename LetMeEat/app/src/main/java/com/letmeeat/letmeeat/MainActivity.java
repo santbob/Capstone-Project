@@ -121,7 +121,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                //refresh();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -252,6 +253,9 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         if (id == R.id.action_settings) {
             Intent prefIntent = new Intent(this, PreferencesActivity.class);
             startActivity(prefIntent);
+            return true;
+        } else if (id == R.id.action_refresh) {
+            refresh();
             return true;
         }
 
