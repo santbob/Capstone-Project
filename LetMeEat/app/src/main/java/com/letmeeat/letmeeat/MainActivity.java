@@ -17,12 +17,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -33,8 +39,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.letmeeat.letmeeat.adapters.RecosAdapter;
 import com.letmeeat.letmeeat.db.RecosContract;
 import com.letmeeat.letmeeat.db.UpdaterService;
+import com.letmeeat.letmeeat.helpers.CircleTransform;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private final String TAG = getClass().getSimpleName();
@@ -44,6 +52,14 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     private LinearLayout noRecommendationsLayout;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authListener;
+
+    private LinearLayout loggedInStateLayout;
+    private ImageView profileImage;
+    private TextView profileInfo;
+
+    private LinearLayout guestStateLayout;
+    private LoginButton fbLoginButton;
+
 
     //FB login callbackManager
     private CallbackManager fbCallbackManager;
@@ -61,41 +77,45 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                // ...
+                handleLoginState(firebaseAuth);
             }
         };
 
-//        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.login_button);
-//        fbLoginButton.setReadPermissions("email", "public_profile");
-//
-//        // Callback registration
-//        fbLoginButton.registerCallback(fbCallbackManager, new FacebookCallback<LoginResult>() {
-//                    @Override
-//                    public void onSuccess(LoginResult loginResult) {
-//                        handleFacebookAccessToken(loginResult.getAccessToken());
-//                    }
-//
-//                    @Override
-//                    public void onCancel() {
-//                        Log.d(TAG, "fb cancel callback");
-//                    }
-//
-//                    @Override
-//                    public void onError(FacebookException exception) {
-//                        // App code
-//                        Log.d(TAG, "fb exception callback");
-//                    }
-//                }
-//
-//        );
+        guestStateLayout = (LinearLayout) findViewById(R.id.guest_state_layout);
+        fbLoginButton = (LoginButton) findViewById(R.id.login_button);
+        fbLoginButton.setReadPermissions("email", "public_profile");
+        // Callback registration
+        fbLoginButton.registerCallback(fbCallbackManager, new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d(TAG, "fb cancel callback");
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        // App code
+                        Log.d(TAG, "fb exception callback");
+                    }
+                }
+
+        );
+
+        loggedInStateLayout = (LinearLayout) findViewById(R.id.loggedin_state_layout);
+        profileImage = (ImageView) findViewById(R.id.profile_image);
+        profileInfo = (TextView) findViewById(R.id.profile_info);
+        TextView logoutText = (TextView) findViewById(R.id.logout);
+        logoutText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fbLoginButton.performClick();
+                firebaseAuth.signOut();
+            }
+        });
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -114,6 +134,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         if (savedInstanceState == null) {
             refresh();
         }
+
+        handleLoginState(firebaseAuth);
     }
 
 
@@ -158,6 +180,32 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         swipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
+    private void handleLoginState(FirebaseAuth fbaseAuth) {
+        FirebaseUser user = fbaseAuth.getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+            if (user.getPhotoUrl() != null) {
+                Picasso.with(MainActivity.this).load(user.getPhotoUrl())
+                        .resize(200, 200)
+                        .transform(new CircleTransform())
+                        .placeholder(R.drawable.ic_account_circle)
+                        .centerCrop()
+                        .into(profileImage);
+            }
+            if (user.getDisplayName() != null) {
+                profileInfo.setText(user.getDisplayName());
+            }
+            guestStateLayout.setVisibility(View.GONE);
+            loggedInStateLayout.setVisibility(View.VISIBLE);
+        } else {
+            // User is signed out
+            Log.d(TAG, "onAuthStateChanged:signed_out");
+            guestStateLayout.setVisibility(View.VISIBLE);
+            loggedInStateLayout.setVisibility(View.GONE);
+        }
+    }
+
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -176,8 +224,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
     }

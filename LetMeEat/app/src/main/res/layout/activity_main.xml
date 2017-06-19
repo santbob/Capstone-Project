@@ -27,28 +27,93 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/reco_list_view"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="28dp"
-            android:paddingLeft="@dimen/side_margin"
-            android:paddingRight="@dimen/side_margin"
-            android:paddingTop="@dimen/medium_pad" />
+            android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/no_recommendations"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_pad"
-            android:elevation="4dp"
-            android:orientation="vertical">
-
-            <TextView
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/reco_list_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/no_recommendations" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_marginBottom="?android:attr/actionBarSize"
+                android:background="@color/app_bg"
+                android:clipToPadding="false"
+                android:paddingBottom="28dp"
+                android:paddingLeft="@dimen/side_margin"
+                android:paddingRight="@dimen/side_margin"
+                android:paddingTop="@dimen/medium_pad" />
+
+            <LinearLayout
+                android:id="@+id/no_recommendations"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/medium_pad"
+                android:elevation="4dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_recommendations" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colorPrimaryDark"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/loggedin_state_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_vertical|start"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:src="@drawable/ic_account_circle" />
+
+                    <TextView
+                        android:id="@+id/profile_info"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|start"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/logout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="end"
+                        android:text="@string/logout"
+                        android:textColor="#00f" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/guest_state_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <com.facebook.login.widget.LoginButton
+                        android:id="@+id/login_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginTop="30dp"
+                        android:gravity="center" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>

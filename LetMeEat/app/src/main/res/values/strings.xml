@@ -31,4 +31,6 @@
     <string name="dot">.</string>
     <string name="error">Error</string>
     <string name="invalid_min_rating">Please enter a valid minimum rating, it can be between 1 to 5</string>
+    <string name="profile">Profile</string>
+    <string name="logout">logout</string>
 </resources>
