@@ -162,7 +162,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         }
 
         final String link = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_WEBSITE));
-        if (TextUtils.isEmpty(phoneNumber)) {
+        if (TextUtils.isEmpty(link)) {
             holder.linkIcon.setVisibility(View.GONE);
         } else {
             holder.linkIcon.setVisibility(View.VISIBLE);
