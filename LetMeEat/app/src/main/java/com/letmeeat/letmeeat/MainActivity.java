@@ -9,9 +9,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -52,14 +54,6 @@ import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
 import com.squareup.picasso.Picasso;
 
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.OnShowRationale;
-import permissions.dispatcher.PermissionRequest;
-import permissions.dispatcher.RuntimePermissions;
-
-@RuntimePermissions
 public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private final String TAG = getClass().getSimpleName();
 
@@ -183,7 +177,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     @Override
     protected void onResume() {
         super.onResume();
-        if (Utils.getSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED)) {
+        if (Utils.getSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED) || recomendationsListView.getChildCount() == 0) {
             refresh();
             Utils.setSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED, false);
         }
@@ -255,7 +249,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     private void refresh() {
         recomendationsListView.setAdapter(null);
-        MainActivityPermissionsDispatcher.getLocationFromGPSWithCheck(MainActivity.this);
+        getLocation();
     }
 
     private void showNoRecommendation() {
@@ -323,11 +317,36 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         recomendationsListView.setAdapter(null);
     }
 
-    @SuppressWarnings("MissingPermission")
-    @NeedsPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    void getLocationFromGPS() {
-        if (!Utils.isGPSEnabled(this)) {
-            handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_gps_off);
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    getLocation();
+                } else {
+                    // Permission Denied
+                    handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_for_app);
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+
+    private void getLocation() {
+        int hasLocationPermission = PackageManager.PERMISSION_GRANTED;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            hasLocationPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (hasLocationPermission != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_permanently);
+            } else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+            }
         } else {
             locationHelper.getLocation(new LocationHelper.LocationHelperListener() {
                 @Override
@@ -339,21 +358,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                 }
             });
         }
-    }
-
-    @OnShowRationale(Manifest.permission.ACCESS_FINE_LOCATION)
-    void showRationaleForLocationPermission(final PermissionRequest request) {
-
-    }
-
-    @OnPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION)
-    void showDeniedForLocationPermission() {
-        handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_for_app);
-    }
-
-    @OnNeverAskAgain(Manifest.permission.ACCESS_FINE_LOCATION)
-    void showNeverAskForLocationPermission() {
-        handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_permanently);
     }
 
     private void handleNoLocationPermissionDialog(int titleResId, final int messageResId) {
