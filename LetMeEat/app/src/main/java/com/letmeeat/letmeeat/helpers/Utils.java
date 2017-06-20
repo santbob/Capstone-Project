@@ -2,6 +2,7 @@ package com.letmeeat.letmeeat.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -17,6 +18,7 @@ public class Utils {
 
     public static final String MIN_RATINGS = "MIN_RATINGS";
     public static final String CATEGORIES = "CATEGORIES";
+    public static final String LOCATION = "LOCATION";
     public static final String PREF_MODIFIED = "PREF_MODIFIED";
 
 
@@ -82,5 +84,10 @@ public class Utils {
     public static float getSharedPrefFloat(Context context, String key) {
         SharedPreferences sp = getSharedPreferences(context);
         return (sp != null) ? sp.getFloat(key, 0) : 0;
+    }
+
+    public static boolean isGPSEnabled(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 }

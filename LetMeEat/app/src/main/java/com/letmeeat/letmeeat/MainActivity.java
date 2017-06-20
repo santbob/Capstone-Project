@@ -1,15 +1,22 @@
 package com.letmeeat.letmeeat;
 
+import android.Manifest;
 import android.app.LoaderManager;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -40,12 +47,24 @@ import com.letmeeat.letmeeat.adapters.RecosAdapter;
 import com.letmeeat.letmeeat.db.RecosContract;
 import com.letmeeat.letmeeat.db.UpdaterService;
 import com.letmeeat.letmeeat.helpers.CircleTransform;
+import com.letmeeat.letmeeat.helpers.LocationHelper;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
 import com.squareup.picasso.Picasso;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnNeverAskAgain;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
+
+@RuntimePermissions
 public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private final String TAG = getClass().getSimpleName();
+
+    private final static int REQUEST_APP_SETTINGS_FOR_LOCATION = 10;
+    private final static int REQUEST_CODE_ASK_PERMISSIONS = 20;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recomendationsListView;
@@ -60,6 +79,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     private LinearLayout guestStateLayout;
     private LoginButton fbLoginButton;
 
+    private AlertDialog permissionConfirmDialog;
+    private LocationHelper locationHelper;
 
     //FB login callbackManager
     private CallbackManager fbCallbackManager;
@@ -132,10 +153,13 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         noRecommendationsLayout = (LinearLayout) findViewById(R.id.no_recommendations);
         getLoaderManager().initLoader(0, null, MainActivity.this);
 
+        if (locationHelper == null) {
+            locationHelper = new LocationHelper(this);
+        }
+
         if (savedInstanceState == null) {
             refresh();
         }
-
         handleLoginState(firebaseAuth);
     }
 
@@ -231,9 +255,15 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     private void refresh() {
         recomendationsListView.setAdapter(null);
-        startService(new Intent(this, UpdaterService.class));
+        MainActivityPermissionsDispatcher.getLocationFromGPSWithCheck(MainActivity.this);
     }
 
+    private void showNoRecommendation() {
+        Log.d("Santhosh", "showNoRecommendation called");
+//        recomendationsListView.setAdapter(null);
+//        recomendationsListView.setVisibility(View.GONE);
+//        noRecommendationsLayout.setVisibility(View.VISIBLE);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -291,5 +321,91 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         recomendationsListView.setAdapter(null);
+    }
+
+    @SuppressWarnings("MissingPermission")
+    @NeedsPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+    void getLocationFromGPS() {
+        if (!Utils.isGPSEnabled(this)) {
+            handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_gps_off);
+        } else {
+            locationHelper.getLocation(new LocationHelper.LocationHelperListener() {
+                @Override
+                public void onLocationIdentified(Location location) {
+                    if (location != null) {
+                        Utils.setSharedPrefString(getApplicationContext(), Utils.LOCATION, (location.getLatitude() + "," + location.getLongitude()));
+                        startService(new Intent(MainActivity.this, UpdaterService.class));
+                    }
+                }
+            });
+        }
+    }
+
+    @OnShowRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+    void showRationaleForLocationPermission(final PermissionRequest request) {
+
+    }
+
+    @OnPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION)
+    void showDeniedForLocationPermission() {
+        handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_for_app);
+    }
+
+    @OnNeverAskAgain(Manifest.permission.ACCESS_FINE_LOCATION)
+    void showNeverAskForLocationPermission() {
+        handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_permanently);
+    }
+
+    private void handleNoLocationPermissionDialog(int titleResId, final int messageResId) {
+        destroyPermissionConfirmDialog();
+        permissionConfirmDialog = new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(titleResId)
+                .setMessage(messageResId)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (messageResId == R.string.location_permission_denied_gps_off) {
+                            goToLocationSettings();
+                        } else {
+                            goToSettings(REQUEST_APP_SETTINGS_FOR_LOCATION);
+                        }
+                    }
+
+                })
+                .setNegativeButton(R.string.no, null)
+                .create();
+
+        permissionConfirmDialog.show();
+        showNoRecommendation();
+    }
+
+    private void destroyPermissionConfirmDialog() {
+        if (permissionConfirmDialog != null) {
+            permissionConfirmDialog.dismiss();
+            permissionConfirmDialog = null;
+        }
+    }
+
+    private void goToSettings(int requestCode) {
+        try {
+            Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+            myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
+            myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(myAppSettings, requestCode);
+        } catch (ActivityNotFoundException e) {
+            //Open the generic Apps page:
+            Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
+            startActivity(intent);
+        }
+    }
+
+    private void goToLocationSettings() {
+        Intent viewIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        if (viewIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(viewIntent, REQUEST_APP_SETTINGS_FOR_LOCATION);
+        } else {
+            new AlertDialog.Builder(MainActivity.this).setMessage(R.string.location_permission_denied_gps_off).setTitle(R.string.error).create().show();
+        }
     }
 }
