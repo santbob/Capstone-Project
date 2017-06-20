@@ -16,7 +16,7 @@ public class Recommendation {
     private String priceRange;
     private String currency;
     private String phone;
-    private String website;
+    private String url;
     private Address address;
     private String imageUrl;
     private List<String> photos;
@@ -97,12 +97,12 @@ public class Recommendation {
         this.phone = phone;
     }
 
-    public String getWebsite() {
-        return website;
+    public String getUrl() {
+        return url;
     }
 
-    public void setWebsite(String website) {
-        this.website = website;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getImageUrl() {

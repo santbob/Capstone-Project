@@ -56,7 +56,7 @@ public class RecosContract {
         /**
          * Type: TEXT
          */
-        public static final String COLUMN_WEBSITE = "website";
+        public static final String COLUMN_URL = "url";
         /**
          * Type: TEXT NOT NULL
          */

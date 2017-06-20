@@ -259,7 +259,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
                 });
             }
 
-            final String link = mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_WEBSITE));
+            final String link = mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_URL));
             if (TextUtils.isEmpty(phoneNumber)) {
                 linkIcon.setVisibility(View.GONE);
             } else {

@@ -30,7 +30,7 @@ public class Utils {
         }
     }
 
-    public static String API_URL = "https://letmeeat-jnplyoqypv.now.sh/";
+    public static String API_URL = "https://letmeeat-yeklrwsvme.now.sh/";
 
     private static SharedPreferences.Editor getSharedPreferencesEditor(Context context) {
         if (context != null) {

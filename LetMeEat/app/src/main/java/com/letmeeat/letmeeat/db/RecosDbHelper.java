@@ -29,7 +29,7 @@ class RecosDbHelper extends SQLiteOpenHelper {
                 + RecosContract.RecosEntry.COLUMN_PRICE_RANGE + " TEXT,"
                 + RecosContract.RecosEntry.COLUMN_CURRENCY + " TEXT NOT NULL DEFAULT USD,"
                 + RecosContract.RecosEntry.COLUMN_PHONE + " TEXT NOT NULL,"
-                + RecosContract.RecosEntry.COLUMN_WEBSITE + " TEXT,"
+                + RecosContract.RecosEntry.COLUMN_URL + " TEXT,"
                 + RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_1 + " TEXT,"
                 + RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_2 + " TEXT,"
                 + RecosContract.RecosEntry.COLUMN_CITY + " TEXT,"

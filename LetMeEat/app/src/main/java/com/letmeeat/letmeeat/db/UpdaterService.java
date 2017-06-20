@@ -105,7 +105,7 @@ public class UpdaterService extends IntentService {
                                 values.put(RecosContract.RecosEntry.COLUMN_PRICE_RANGE, reco.getPriceRange());
                                 values.put(RecosContract.RecosEntry.COLUMN_CURRENCY, reco.getCurrency());
                                 values.put(RecosContract.RecosEntry.COLUMN_PHONE, reco.getPhone());
-                                values.put(RecosContract.RecosEntry.COLUMN_WEBSITE, reco.getWebsite());
+                                values.put(RecosContract.RecosEntry.COLUMN_URL, reco.getUrl());
                                 values.put(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_1, reco.getAddress().getStreetLine1());
                                 values.put(RecosContract.RecosEntry.COLUMN_ADDRESS_LINE_2, reco.getAddress().getStreetLine2());
                                 values.put(RecosContract.RecosEntry.COLUMN_CITY, reco.getAddress().getCity());

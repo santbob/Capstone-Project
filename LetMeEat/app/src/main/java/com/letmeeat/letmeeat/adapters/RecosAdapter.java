@@ -161,7 +161,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
             });
         }
 
-        final String link = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_WEBSITE));
+        final String link = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_URL));
         if (TextUtils.isEmpty(link)) {
             holder.linkIcon.setVisibility(View.GONE);
         } else {
