@@ -152,7 +152,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         }
 
         if (savedInstanceState == null) {
-            refresh();
+            Utils.setSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED, true);
         }
         handleLoginState(firebaseAuth);
     }

@@ -77,7 +77,7 @@ public class UpdaterService extends IntentService {
 
     private void getRecommendations() {
         RecoRequest recoRequest = new RecoRequest();
-        recoRequest.setLocation("95131");
+        recoRequest.setLocation(Utils.getSharedPrefString(getApplicationContext(), Utils.LOCATION));
         recoRequest.setRadius(8047);
         recoRequest.setLimit(4);
         recoRequest.setCategories(Utils.getSharedPrefString(getApplicationContext(), Utils.CATEGORIES));
