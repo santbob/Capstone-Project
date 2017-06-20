@@ -162,7 +162,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         TextView name = (TextView) mRootView.findViewById(R.id.reco_name);
         ImageView image = (ImageView) mRootView.findViewById(R.id.reco_image);
         TextView priceRange = (TextView) mRootView.findViewById(R.id.price_range);
-        TextView dotSeparator = (TextView) mRootView.findViewById(R.id.dot_separator);
         TextView reviewsCount = (TextView) mRootView.findViewById(R.id.reviews_count);
         ImageView ratingStar1 = (ImageView) mRootView.findViewById(R.id.rating_star_1);
         ImageView ratingStar2 = (ImageView) mRootView.findViewById(R.id.rating_star_2);
@@ -213,10 +212,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
             String price = mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PRICE_RANGE));
             if (!TextUtils.isEmpty(price)) {
                 priceRange.setText(price);
-                dotSeparator.setVisibility(View.VISIBLE);
-            } else {
-                priceRange.setVisibility(View.GONE);
-                dotSeparator.setVisibility(View.GONE);
             }
 
             byte[] jsonBytes = mCursor.getBlob(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CATEGORIES));

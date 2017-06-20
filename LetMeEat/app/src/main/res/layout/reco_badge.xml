@@ -20,8 +20,8 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:paddingBottom="@dimen/small_pad"
-        android:paddingEnd="@dimen/medium_pad"
-        android:paddingStart="@dimen/medium_pad"
+        android:paddingEnd="@dimen/small_pad"
+        android:paddingStart="@dimen/small_pad"
         android:paddingTop="@dimen/small_pad">
 
         <TextView
@@ -31,32 +31,13 @@
             android:layout_marginBottom="@dimen/small_pad"
             android:minHeight="12dp"
             android:textColor="@color/black"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_pad"
             android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/price_range"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/dot_separator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/small_pad"
-                android:layout_marginStart="@dimen/small_pad"
-                android:text="@string/dot"
-                android:gravity="start"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
 
             <ImageView
                 android:id="@+id/rating_star_1"
@@ -105,7 +86,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/small_pad"
                 android:gravity="center_vertical"
-                android:textColor="@color/charcoal" />
+                android:textColor="@color/charcoal"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -115,7 +97,7 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:textColor="@color/black"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/address"
@@ -127,15 +109,24 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="30dp"
+        android:layout_width="@dimen/icon_size"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/price_range"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/phone"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
             android:contentDescription="@string/open_number_on_phone"
             android:paddingBottom="@dimen/small_pad"
             android:paddingTop="@dimen/small_pad"
@@ -143,8 +134,8 @@
 
         <ImageView
             android:id="@+id/link"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
             android:contentDescription="@string/opens_link"
             android:paddingBottom="@dimen/small_pad"
             android:paddingTop="@dimen/small_pad"
@@ -152,8 +143,8 @@
 
         <ImageView
             android:id="@+id/directions"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
             android:contentDescription="@string/get_directions"
             android:paddingBottom="@dimen/small_pad"
             android:paddingTop="@dimen/small_pad"

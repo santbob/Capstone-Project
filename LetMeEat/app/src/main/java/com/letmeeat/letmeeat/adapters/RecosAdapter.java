@@ -46,7 +46,6 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         private final TextView name;
         private final TextView reviewsCount;
         private final TextView priceRange;
-        private final TextView dotSeparator;
         private final TextView cuisine;
         private final TextView address;
         private final ImageView image;
@@ -57,7 +56,6 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
             name = (TextView) v.findViewById(R.id.reco_name);
             image = (ImageView) v.findViewById(R.id.reco_image);
             priceRange = (TextView) v.findViewById(R.id.price_range);
-            dotSeparator = (TextView) v.findViewById(R.id.dot_separator);
             reviewsCount = (TextView) v.findViewById(R.id.reviews_count);
             ratingStar1 = (ImageView) v.findViewById(R.id.rating_star_1);
             ratingStar2 = (ImageView) v.findViewById(R.id.rating_star_2);
@@ -125,10 +123,6 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         String priceRange = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_PRICE_RANGE));
         if (!TextUtils.isEmpty(priceRange)) {
             holder.priceRange.setText(priceRange);
-            holder.dotSeparator.setVisibility(View.VISIBLE);
-        } else {
-            holder.priceRange.setVisibility(View.GONE);
-            holder.dotSeparator.setVisibility(View.GONE);
         }
 
         byte[] jsonBytes = cursor.getBlob(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_CATEGORIES));

@@ -11,8 +11,8 @@
     <include layout="@layout/reco_badge" />
 
     <ImageView
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/more_details"
         android:src="@drawable/ic_right_arrow" />
