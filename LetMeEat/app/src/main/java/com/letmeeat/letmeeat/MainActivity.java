@@ -289,7 +289,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
             @Override
             public void onRecoSelection(String recoId, String recoName) {
                 preferencesHelper.updateChoosenReco(recoId, firebaseAuth.getCurrentUser() != null);
-                Toast.makeText(MainActivity.this, getString(R.string.reco_ignored, recoName, Utils.getSharedPrefInt(getApplicationContext(), Utils.NUM_OF_DAYS_TO_IGNORE, Utils.DEFAULT_IGNORE_DAYS)), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.reco_ignored, recoName, Utils.DEFAULT_IGNORE_DAYS), Toast.LENGTH_SHORT).show();
             }
         });
         adapter.setHasStableIds(true);
@@ -335,15 +335,19 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
             }
         } else {
-            locationHelper.getLocation(new LocationHelper.LocationHelperListener() {
-                @Override
-                public void onLocationIdentified(Location location) {
-                    if (location != null) {
-                        Utils.setSharedPrefString(getApplicationContext(), Utils.LOCATION, (location.getLatitude() + "," + location.getLongitude()));
-                        startService(new Intent(MainActivity.this, UpdaterService.class));
+            if(Utils.isGPSEnabled(getApplicationContext())) {
+                locationHelper.getLocation(new LocationHelper.LocationHelperListener() {
+                    @Override
+                    public void onLocationIdentified(Location location) {
+                        if (location != null) {
+                            Utils.setSharedPrefString(getApplicationContext(), Utils.LOCATION, (location.getLatitude() + "," + location.getLongitude()));
+                            startService(new Intent(MainActivity.this, UpdaterService.class));
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                handleNoLocationPermissionDialog(R.string.location_permission_denied_gps_off);
+            }
         }
     }
 

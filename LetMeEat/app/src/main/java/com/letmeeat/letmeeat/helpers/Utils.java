@@ -104,19 +104,6 @@ public class Utils {
         return (sp != null) ? sp.getFloat(key, 0) : 0;
     }
 
-    public static void setSharedPrefInt(Context context, String key, int value) {
-        SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
-        if (editor != null) {
-            editor.putInt(key, value);
-            editor.apply();
-        }
-    }
-
-    public static int getSharedPrefInt(Context context, String key, int defaultValue) {
-        SharedPreferences sp = getSharedPreferences(context);
-        return (sp != null) ? sp.getInt(key, defaultValue) : defaultValue;
-    }
-
     public static boolean isGPSEnabled(Context context) {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
