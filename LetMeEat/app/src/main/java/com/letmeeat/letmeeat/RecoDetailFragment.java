@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -41,23 +40,18 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
     private final String TAG = getClass().getSimpleName();
 
     private static final String ARG_ITEM_ID = "item_id";
-    private static final float PARALLAX_FACTOR = 1.25f;
 
     private Cursor mCursor;
     private long mItemId;
     private View mRootView;
-    private int mMutedColor = 0xFF333333;
     private DrawInsetsFrameLayout mDrawInsetsFrameLayout;
     private ColorDrawable mStatusBarColorDrawable;
 
     private GridView mPhotosGridView;
     private PhotosAdapter picturesAdapter;
-    private int mTopInset;
     private View mPhotoContainerView;
     private ImageView mPhotoView;
-    private final boolean mIsCard = false;
-    private int mStatusBarFullOpacityBottom;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     private IntentHelper intentHelper;
 
@@ -83,13 +77,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
         }
-
-        mStatusBarFullOpacityBottom = getResources().getDimensionPixelSize(R.dimen.detail_card_top_margin);
         setHasOptionsMenu(true);
-    }
-
-    public RecoDetailsActivity getActivityCast() {
-        return (RecoDetailsActivity) getActivity();
     }
 
     @Override
@@ -109,13 +97,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         mRootView = inflater.inflate(R.layout.fragment_reco_detail, container, false);
         mDrawInsetsFrameLayout = (DrawInsetsFrameLayout)
                 mRootView.findViewById(R.id.draw_insets_frame_layout);
-        mDrawInsetsFrameLayout.setOnInsetsCallback(new DrawInsetsFrameLayout.OnInsetsCallback() {
-            @Override
-            public void onInsetsChanged(Rect insets) {
-                mTopInset = insets.top;
-            }
-        });
-
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
         mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
@@ -138,20 +119,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         int color = 0;
         mStatusBarColorDrawable.setColor(color);
         mDrawInsetsFrameLayout.setInsetBackground(mStatusBarColorDrawable);
-    }
-
-    static float progress(float v, float min, float max) {
-        return constrain((v - min) / (max - min), 0, 1);
-    }
-
-    private static float constrain(float val, float min, float max) {
-        if (val < min) {
-            return min;
-        } else if (val > max) {
-            return max;
-        } else {
-            return val;
-        }
     }
 
     private void bindViews() {
@@ -324,8 +291,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
         if (mPhotoContainerView == null || mPhotoView.getHeight() == 0) {
             return Integer.MAX_VALUE;
         }
-
-        // account for parallax
-        return mIsCard ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() : mPhotoView.getHeight();
+        return mPhotoView.getHeight();
     }
 }

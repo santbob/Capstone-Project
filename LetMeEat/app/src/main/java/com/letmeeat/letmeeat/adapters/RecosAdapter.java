@@ -18,6 +18,7 @@ import com.letmeeat.letmeeat.db.RecosContract;
 import com.letmeeat.letmeeat.helpers.IntentHelper;
 import com.letmeeat.letmeeat.models.Address;
 import com.letmeeat.letmeeat.models.Category;
+import com.letmeeat.letmeeat.models.Coordinates;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,12 +33,13 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
     private final Cursor cursor;
     private final Activity activity;
     private final OnItemClickListener itemClickListener;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     private final IntentHelper intentHelper;
 
     public interface OnItemClickListener {
         void onItemClick(long itemId);
+
         void onRecoSelection(String recoId, String recoName);
     }
 
@@ -194,7 +196,24 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         address.setState(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_STATE)));
         address.setZip(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_ZIP)));
         address.setLandmark(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_LANDMARK)));
+        address.setDisplayAddress(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_DISPLAY_ADDRESS)));
+        address.setCountry(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_COUNTRY)));
+        address.setCoordinates(getCoordinateFromLatLong(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_LAT_LONG))));
         return address;
+    }
+
+    private Coordinates getCoordinateFromLatLong(String latLong) {
+        Coordinates coordinates = null;
+        if (!TextUtils.isEmpty(latLong)) {
+            String[] ll = latLong.split(",");
+            if (ll.length > 1) {
+                coordinates = new Coordinates();
+                coordinates.setLatitude(Float.parseFloat(ll[0]));
+                coordinates.setLongitude(Float.parseFloat(ll[1]));
+            }
+
+        }
+        return coordinates;
     }
 
     @Override

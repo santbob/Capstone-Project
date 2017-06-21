@@ -1,8 +1,5 @@
 package com.letmeeat.letmeeat.helpers;
 
-/**
- * Created by santhosh on 21/04/2017.
- */
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -11,6 +8,10 @@ import android.graphics.Paint;
 
 import com.squareup.picasso.Transformation;
 
+/**
+ * Created by santhosh on 21/04/2017.
+ * Transformation class to submit to picasso to make an image circular
+ */
 public class CircleTransform implements Transformation {
     @Override
     public Bitmap transform(Bitmap source) {

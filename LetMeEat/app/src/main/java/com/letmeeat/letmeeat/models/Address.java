@@ -113,15 +113,4 @@ public class Address {
         }
         return address;
     }
-
-    public String getCityState() {
-        String cityState = "";
-        if (!TextUtils.isEmpty(city)) {
-            cityState += city;
-        }
-        if (!TextUtils.isEmpty(state)) {
-            cityState += SPACE + state;
-        }
-        return cityState;
-    }
 }

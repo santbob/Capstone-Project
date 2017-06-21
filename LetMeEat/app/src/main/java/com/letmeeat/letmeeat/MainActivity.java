@@ -3,11 +3,8 @@ package com.letmeeat.letmeeat;
 import android.Manifest;
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -161,14 +158,12 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     @Override
     protected void onStart() {
         super.onStart();
-        registerReceiver(mRefreshingReceiver, new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
         firebaseAuth.addAuthStateListener(authListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(mRefreshingReceiver);
         if (authListener != null) {
             firebaseAuth.removeAuthStateListener(authListener);
         }
@@ -181,22 +176,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
             refresh();
             Utils.setSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED, false);
         }
-    }
-
-    private boolean mIsRefreshing = false;
-
-    private final BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
-                mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
-                updateRefreshingUI();
-            }
-        }
-    };
-
-    private void updateRefreshingUI() {
-        // swipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
     private void handleLoginState(FirebaseAuth fbaseAuth) {
@@ -335,7 +314,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                     getLocation();
                 } else {
                     // Permission Denied
-                    handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_for_app);
+                    handleNoLocationPermissionDialog(R.string.location_permission_denied_for_app);
                 }
                 break;
             default:
@@ -351,7 +330,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         }
         if (hasLocationPermission != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                handleNoLocationPermissionDialog(R.string.permission_needed, R.string.location_permission_denied_permanently);
+                handleNoLocationPermissionDialog(R.string.location_permission_denied_permanently);
             } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
             }
@@ -368,11 +347,11 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         }
     }
 
-    private void handleNoLocationPermissionDialog(int titleResId, final int messageResId) {
+    private void handleNoLocationPermissionDialog(final int messageResId) {
         destroyPermissionConfirmDialog();
         permissionConfirmDialog = new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(titleResId)
+                .setTitle(R.string.permission_needed)
                 .setMessage(messageResId)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -380,7 +359,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                         if (messageResId == R.string.location_permission_denied_gps_off) {
                             goToLocationSettings();
                         } else {
-                            goToSettings(REQUEST_APP_SETTINGS_FOR_LOCATION);
+                            goToSettings();
                         }
                     }
 
@@ -399,12 +378,12 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         }
     }
 
-    private void goToSettings(int requestCode) {
+    private void goToSettings() {
         try {
             Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
             myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
             myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(myAppSettings, requestCode);
+            startActivityForResult(myAppSettings, REQUEST_APP_SETTINGS_FOR_LOCATION);
         } catch (ActivityNotFoundException e) {
             //Open the generic Apps page:
             Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);

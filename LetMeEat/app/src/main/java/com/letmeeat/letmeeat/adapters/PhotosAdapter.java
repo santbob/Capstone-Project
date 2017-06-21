@@ -52,6 +52,7 @@ public class PhotosAdapter extends BaseAdapter {
         }
         String url = (String) getItem(position);
         if (url != null) {
+            //noinspection SuspiciousNameCombination
             Picasso.with(context)
                     .load(url)
                     .resize(imageWidth, imageWidth)

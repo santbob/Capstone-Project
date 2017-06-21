@@ -1,10 +1,5 @@
 package com.letmeeat.letmeeat.helpers;
 
-/**
- * Created by santhosh on 19/06/2017.
- * Activities should create an instance of this class and call requestLocationUpdate when they have to fetch the new location.
- * Every single time requestLocationUpdate is called, it will trigger the GPS update and wait for its first locationChanged and once it recieves it, it will stop recieving any more updates, unless triggered again.
- */
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +11,11 @@ import android.os.Handler;
 
 
 @SuppressWarnings("MissingPermission")
+/**
+ * Created by santhosh on 19/06/2017.
+ * Activities should create an instance of this class and call requestLocationUpdate when they have to fetch the new location.
+ * Every single time requestLocationUpdate is called, it will trigger the GPS update and wait for its first locationChanged and once it recieves it, it will stop recieving any more updates, unless triggered again.
+ */
 public class LocationHelper implements LocationListener {
 
     public interface LocationHelperListener {
@@ -134,10 +134,12 @@ public class LocationHelper implements LocationListener {
         try {
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ex) {
+            //donothing
         }
         try {
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         } catch (Exception ex) {
+            //donothing
         }
 
         //don't start listeners if no provider is enabled

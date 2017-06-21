@@ -11,8 +11,8 @@ import java.util.Set;
 public class Preferences {
 
     private float minimumRatings;
-    private Set<String> categories = new HashSet<String>();
-    private Set<String> choosenRecos = new HashSet<String>();
+    private Set<String> categories = new HashSet<>();
+    private Set<String> choosenRecos = new HashSet<>();
 
     public float getMinimumRatings() {
         return minimumRatings;

@@ -1,5 +1,6 @@
 package com.letmeeat.letmeeat;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -9,6 +10,7 @@ import android.text.TextUtils;
  * Base Activity which includes all the methods required in each activity and extends AppCompactActivity
  */
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;

@@ -35,9 +35,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 public class UpdaterService extends IntentService {
     private static final String TAG = "UpdaterService";
 
-    public static final String BROADCAST_ACTION_STATE_CHANGE
+    private static final String BROADCAST_ACTION_STATE_CHANGE
             = "com.letmeeat.letmeeat.intent.action.STATE_CHANGE";
-    public static final String EXTRA_REFRESHING
+    private static final String EXTRA_REFRESHING
             = "com.letmeeat.letmeeat.intent.extra.REFRESHING";
 
     public UpdaterService() {
@@ -46,7 +46,7 @@ public class UpdaterService extends IntentService {
 
     private ApiService apiService;
     // Don't even inspect the intent, we only do one thing, and that's fetch content.
-    private final ArrayList<ContentProviderOperation> cpo = new ArrayList<ContentProviderOperation>();
+    private final ArrayList<ContentProviderOperation> cpo = new ArrayList<>();
 
     private final Uri dirUri = RecosContract.RecosEntry.CONTENT_URI;
 

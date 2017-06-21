@@ -16,7 +16,6 @@
     <string name="save_preferences">Save Preferences</string>
     <string name="processing">Processing</string>
     <string name="please_wait">Please wait</string>
-    <string name="pricerange">%1$s</string>
     <string name="no_recommendations">We don\'t have recommendations at this time, please check again later</string>
     <string name="static_map_url">https://maps.googleapis.com/maps/api/staticmap?center=%1$s&amp;zoom=13&amp;size=%3$dx%4$d&amp;maptype=roadmap&amp;markers=color:red|%2$s</string>
     <string name="map_intent_url">geo:0,0?q=%1$s</string>
@@ -28,10 +27,8 @@
     <string name="float_placeholder"><xliff:g id="" example="3.5">%1$.1f</xliff:g></string>
     <string name="opens_link">Opens link</string>
     <string name="open_number_on_phone">Dials the number in the Phone App, hit call after that</string>
-    <string name="dot">.</string>
     <string name="error">Error</string>
     <string name="invalid_min_rating">Please enter a valid minimum rating, it can be between 1 to 5</string>
-    <string name="profile">Profile</string>
     <string name="logout">logout</string>
     <string name="profile_image">Users Profile Image from facebook</string>
     <string name="action_refresh">Refresh</string>
@@ -40,8 +37,6 @@
     <string name="location_permission_denied_permanently">To find restaurants near you, please enable Location permission for LetMeEat in Settings.</string>
     <string name="location_permission_denied_gps_off">Cannot find restaurants near you. Please enable Location services in your phone.</string>
     <string name="location_permission_denied_for_app">Cannot find restaurants near you. Please enable Location permission for LetMeEat in Settings.</string>
-    <string name="location_permission_rationale">Location access is required to find restaurants near you. You can always change this later in phone settings.</string>
-    <string name="location_permission_rationale_title">Find restaurants near you</string>
 
     <string name="ok">Okay</string>
     <string name="no">No</string>

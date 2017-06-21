@@ -28,7 +28,6 @@ public class RecoDetailsActivity extends BaseActivity implements LoaderManager.L
     private Cursor mCursor;
     private long mStartId;
 
-    private long mSelectedItemId;
     private int mSelectedItemUpButtonFloor = Integer.MAX_VALUE;
     private int mTopInset;
 
@@ -69,7 +68,6 @@ public class RecoDetailsActivity extends BaseActivity implements LoaderManager.L
             public void onPageSelected(int position) {
                 if (mCursor != null) {
                     mCursor.moveToPosition(position);
-                    mSelectedItemId = mCursor.getLong(mCursor.getColumnIndex(RecosContract.RecosEntry._ID));
                     updateUpButtonPosition();
                 }
             }
@@ -101,7 +99,6 @@ public class RecoDetailsActivity extends BaseActivity implements LoaderManager.L
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
                 mStartId = RecosContract.RecosEntry.getItemId(getIntent().getData());
-                mSelectedItemId = mStartId;
             }
         }
     }
@@ -136,13 +133,6 @@ public class RecoDetailsActivity extends BaseActivity implements LoaderManager.L
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
-    }
-
-    public void onUpButtonFloorChanged(long itemId, RecoDetailFragment fragment) {
-        if (itemId == mSelectedItemId) {
-            mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-            updateUpButtonPosition();
-        }
     }
 
     private void updateUpButtonPosition() {

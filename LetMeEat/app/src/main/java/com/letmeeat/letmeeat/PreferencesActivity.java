@@ -43,7 +43,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
     private final String TAG = getClass().getSimpleName();
 
     private List<Category> autoCompleteCategoriesList;
-    private Set<String> categorySet = new HashSet<String>();
+    private final Set<String> categorySet = new HashSet<>();
     private ArrayAdapter<Category> adapter;
 
 
@@ -145,7 +145,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
             public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
                 if (response.body() != null && response.body().size() > 0) {
                     autoCompleteCategoriesList = response.body();
-                    adapter = new ArrayAdapter<Category>(PreferencesActivity.this,
+                    adapter = new ArrayAdapter<>(PreferencesActivity.this,
                             android.R.layout.simple_dropdown_item_1line, autoCompleteCategoriesList);
                     autoCompleteTextView.setAdapter(adapter);
                     autoCompleteTextView.setThreshold(0);
@@ -166,7 +166,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
     }
 
     private void savePreferences() {
-        float minRatings = 0;
+        float minRatings;
         try {
             minRatings = Float.valueOf(minRatingsTextView.getText().toString());
         } catch (NumberFormatException e) {

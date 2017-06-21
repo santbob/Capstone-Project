@@ -6,7 +6,6 @@
     <dimen name="x_small_pad">2dp</dimen>
     <dimen name="small_pad">5dp</dimen>
     <dimen name="medium_pad">10dp</dimen>
-    <dimen name="large_pad">16dp</dimen>
     <dimen name="picture_width">90dp</dimen>
     <dimen name="side_margin">8dp</dimen>
     <dimen name="map_height">150dp</dimen>

@@ -1,13 +1,11 @@
 package com.letmeeat.letmeeat.models;
 
-import java.io.Serializable;
-
 /**
  * Created by santhosh on 04/06/2017.
  * Category object represnting the cuisine category
  */
 
-public class Category implements Serializable {
+public class Category {
 
     private String alias;
     private String title;
