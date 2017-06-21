@@ -50,8 +50,10 @@ import com.letmeeat.letmeeat.db.RecosContract;
 import com.letmeeat.letmeeat.db.UpdaterService;
 import com.letmeeat.letmeeat.helpers.CircleTransform;
 import com.letmeeat.letmeeat.helpers.LocationHelper;
+import com.letmeeat.letmeeat.helpers.PreferencesHelper;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
+import com.letmeeat.letmeeat.models.Preferences;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -78,6 +80,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     //FB login callbackManager
     private CallbackManager fbCallbackManager;
+
+    private PreferencesHelper preferencesHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +159,13 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
             Utils.setSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED, true);
         }
         handleLoginState(firebaseAuth);
+
+        preferencesHelper = new PreferencesHelper(new PreferencesHelper.PreferencesListener() {
+            @Override
+            public void onPreferencesLoaded(Preferences preferences) {
+
+            }
+        });
     }
 
 
@@ -304,6 +315,12 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
             @Override
             public void onItemClick(long itemId) {
                 startActivity(new Intent(Intent.ACTION_VIEW, RecosContract.RecosEntry.buildItemUri(itemId)));
+            }
+
+            @Override
+            public void onRecoSelection(String recoId, String recoName) {
+                preferencesHelper.updateChoosenReco(recoId, firebaseAuth.getCurrentUser() != null);
+                Toast.makeText(MainActivity.this, getString(R.string.reco_ignored, recoName, Utils.getSharedPrefInt(getApplicationContext(), Utils.NUM_OF_DAYS_TO_IGNORE, Utils.DEFAULT_IGNORE_DAYS)), Toast.LENGTH_SHORT).show();
             }
         });
         adapter.setHasStableIds(true);

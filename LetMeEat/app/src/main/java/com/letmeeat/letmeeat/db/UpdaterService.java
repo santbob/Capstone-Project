@@ -80,8 +80,9 @@ public class UpdaterService extends IntentService {
         recoRequest.setLocation(Utils.getSharedPrefString(getApplicationContext(), Utils.LOCATION));
         recoRequest.setRadius(8047);
         recoRequest.setLimit(4);
-        recoRequest.setCategories(Utils.getSharedPrefString(getApplicationContext(), Utils.CATEGORIES));
+        recoRequest.setCategories(Utils.getCommaSeparatedStringOfSet(Utils.getSharedPrefStringSet(getApplicationContext(), Utils.CATEGORIES)));
         recoRequest.setMinRating(Utils.getSharedPrefFloat(getApplicationContext(), Utils.MIN_RATINGS));
+        recoRequest.setIgnore(Utils.getCommaSeparatedStringOfSet(Utils.getSharedPrefStringSet(getApplicationContext(), Utils.RECOS_CHOOSEN_IN_PAST)));
 
         Call<List<Recommendation>> call = apiService.getRecommendations(recoRequest);
 

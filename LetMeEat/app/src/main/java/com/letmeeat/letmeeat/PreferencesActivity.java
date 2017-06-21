@@ -16,22 +16,16 @@ import android.widget.EditText;
 
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.letmeeat.letmeeat.helpers.PreferencesHelper;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.models.Category;
 import com.letmeeat.letmeeat.models.Preferences;
 import com.letmeeat.letmeeat.service.ApiService;
 import com.letmeeat.letmeeat.views.TagView;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,8 +43,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
     private final String TAG = getClass().getSimpleName();
 
     private List<Category> autoCompleteCategoriesList;
-    private DatabaseReference preferencesDBRef;
-    private Map<String, Category> categoryMap = new HashMap<String, Category>();
+    private Set<String> categorySet = new HashSet<String>();
     private ArrayAdapter<Category> adapter;
 
 
@@ -61,6 +54,8 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authListener;
 
+    private PreferencesHelper preferencesHelper;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,17 +63,19 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getCategories();
         firebaseAuth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
             }
         };
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        preferencesDBRef = database.getReference("preferences");
-        //preferencesModel = new Preferences();
+        preferencesHelper = new PreferencesHelper(new PreferencesHelper.PreferencesListener() {
+            @Override
+            public void onPreferencesLoaded(Preferences preferences) {
+                hideProgressDialog();
+                updatePreferenceUI(preferences);
+            }
+        });
 
         minRatingsTextView = (EditText) findViewById(R.id.pref_minimum_ratings);
 
@@ -97,6 +94,8 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         });
 
         selectedCuisinesLayout = (FlexboxLayout) findViewById(R.id.selected_cuisines);
+        getCategories();
+        loadStoredPreferences();
     }
 
     @Override
@@ -151,13 +150,11 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
                     autoCompleteTextView.setAdapter(adapter);
                     autoCompleteTextView.setThreshold(0);
                 }
-                loadStoredPreferences();
             }
 
             @Override
             public void onFailure(Call<List<Category>> call, Throwable t) {
                 Log.d(TAG, t.toString());
-                loadStoredPreferences();
             }
         });
     }
@@ -183,107 +180,48 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
 
         Preferences preferencesModel = new Preferences();
         preferencesModel.setMinimumRatings(minRatings);
-        if (categoryMap.size() > 0) {
-            preferencesModel.setCategories(categoryMap);
-        }
+        preferencesModel.setCategories(categorySet);
+        preferencesModel.setChoosenRecos(Utils.getSharedPrefStringSet(getApplicationContext(), Utils.RECOS_CHOOSEN_IN_PAST));
+        preferencesHelper.writePreferences(preferencesModel, firebaseAuth.getCurrentUser() != null);
 
-        if (firebaseAuth.getCurrentUser() != null) {
-            Moshi moshi = new Moshi.Builder().build();
-            JsonAdapter<Preferences> jsonAdapter = moshi.adapter(Preferences.class);
-            String json = jsonAdapter.toJson(preferencesModel);
-            preferencesDBRef.setValue(json);
-        }
-
-        storePreferences(preferencesModel);
         Utils.setSharedPrefBoolean(getApplicationContext(), Utils.PREF_MODIFIED, true);
         onBackPressed();
     }
 
     private void addCuisine2Preference(Category category) {
-        if (!categoryMap.containsKey(category.getAlias())) {
-            categoryMap.put(category.getAlias(), category);
+        if (!categorySet.contains(category.getAlias())) {
+            categorySet.add(category.getAlias());
             addCategoryTagView(category);
         }
     }
 
     @Override
     public void onTagDelete(TagView view) {
-        if (categoryMap.containsKey(view.getValue())) {
-            categoryMap.remove(view.getValue());
+        if (categorySet.contains(view.getValue())) {
+            categorySet.remove(view.getValue());
             selectedCuisinesLayout.removeView(view);
         }
     }
 
-    private void getStoredPreferencesFromFirebase() {
-        showProgressDialog(null, null);
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                try {
-                    String prefJson = (String) dataSnapshot.getValue();
-                    Moshi moshi = new Moshi.Builder().build();
-                    JsonAdapter<Preferences> jsonAdapter = moshi.adapter(Preferences.class);
-
-                    if (prefJson != null) {
-                        Preferences preferencesModel = jsonAdapter.fromJson(prefJson);
-                        updatePreferenceUI(preferencesModel);
-                    }
-                } catch (Exception e) {
-                    Log.d(TAG, "Exception occcured " + e.toString());
-                } finally {
-                    hideProgressDialog();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-        preferencesDBRef.addValueEventListener(postListener);
-    }
-
     private void loadStoredPreferences() {
-        if (firebaseAuth.getCurrentUser() != null) {
-            getStoredPreferencesFromFirebase();
-        } else {
-            getStoredPreferences();
-        }
+        showProgressDialog(null, null);
+        preferencesHelper.readStoredPreferences(firebaseAuth.getCurrentUser() != null);
     }
 
     private void updatePreferenceUI(Preferences preferencesModel) {
         if (preferencesModel != null) {
             if (preferencesModel.getCategories() != null) {
-                for (Category category : preferencesModel.getCategories().values()) {
-                    addCuisine2Preference(category);
+                String commaSeparatedCat = Utils.getCommaSeparatedStringOfSet(preferencesModel.getCategories());
+                for (Category category : autoCompleteCategoriesList) {
+                    if (commaSeparatedCat.contains(category.getAlias())) {
+                        addCuisine2Preference(category);
+                    }
                 }
             }
             if (preferencesModel.getMinimumRatings() > 0) {
                 minRatingsTextView.setText(getString(R.string.float_placeholder, preferencesModel.getMinimumRatings()));
             }
         }
-    }
-
-    private void storePreferences(Preferences preferences) {
-        Utils.setSharedPrefString(getApplicationContext(), Utils.CATEGORIES, preferences.getCategoriesAlias());
-        Utils.setSharedPrefFloat(getApplicationContext(), Utils.MIN_RATINGS, preferences.getMinimumRatings());
-    }
-
-    private void getStoredPreferences() {
-        Preferences preferences = new Preferences();
-        preferences.setMinimumRatings(Utils.getSharedPrefFloat(getApplicationContext(), Utils.MIN_RATINGS));
-        String cats = Utils.getSharedPrefString(getApplicationContext(), Utils.CATEGORIES);
-        Map<String, Category> catsMap = new HashMap<String, Category>();
-        for (Category cat : autoCompleteCategoriesList) {
-            if (cats.contains(cat.getAlias())) {
-                catsMap.put(cat.getAlias(), cat);
-            }
-        }
-        preferences.setCategories(catsMap);
-        updatePreferenceUI(preferences);
     }
 }
 

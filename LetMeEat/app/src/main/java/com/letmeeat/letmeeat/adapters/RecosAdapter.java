@@ -38,6 +38,7 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
 
     public interface OnItemClickListener {
         void onItemClick(long itemId);
+        void onRecoSelection(String recoId, String recoName);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -48,12 +49,13 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
         private final TextView priceRange;
         private final TextView cuisine;
         private final TextView address;
-        private final ImageView image;
+        private final ImageView image, goingHere;
         private final ImageView ratingStar1, ratingStar2, ratingStar3, ratingStar4, ratingStar5, phoneIcon, linkIcon, directionsIcon;
 
         public ViewHolder(LinearLayout v) {
             super(v);
             name = (TextView) v.findViewById(R.id.reco_name);
+            goingHere = (ImageView) v.findViewById(R.id.going_here);
             image = (ImageView) v.findViewById(R.id.reco_image);
             priceRange = (TextView) v.findViewById(R.id.price_range);
             reviewsCount = (TextView) v.findViewById(R.id.reviews_count);
@@ -67,6 +69,15 @@ public class RecosAdapter extends RecyclerView.Adapter<RecosAdapter.ViewHolder> 
             phoneIcon = (ImageView) v.findViewById(R.id.phone);
             linkIcon = (ImageView) v.findViewById(R.id.link);
             directionsIcon = (ImageView) v.findViewById(R.id.directions);
+            goingHere.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cursor.moveToPosition(getAdapterPosition());
+                    if (itemClickListener != null) {
+                        itemClickListener.onRecoSelection(cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_RECO_ID)), cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_NAME)));
+                    }
+                }
+            });
             v.setOnClickListener(this);
         }
 

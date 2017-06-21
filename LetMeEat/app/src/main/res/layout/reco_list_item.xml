@@ -10,10 +10,25 @@
 
     <include layout="@layout/reco_badge" />
 
-    <ImageView
-        android:layout_width="18dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="@string/more_details"
-        android:src="@drawable/ic_right_arrow" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:id="@+id/going_here"
+            android:layout_marginTop="@dimen/x_small_pad"
+            android:layout_marginEnd="@dimen/x_small_pad"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/choose"
+            android:src="@drawable/ic_satisfied" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/more_details"
+            android:src="@drawable/ic_right_arrow" />
+    </RelativeLayout>
 </LinearLayout>

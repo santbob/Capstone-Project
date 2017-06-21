@@ -1,8 +1,7 @@
 package com.letmeeat.letmeeat.models;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by santhosh on 23/10/2016.
@@ -12,7 +11,8 @@ import java.util.Map;
 public class Preferences {
 
     private float minimumRatings;
-    private Map<String, Category> categories = new HashMap<String, Category>();
+    private Set<String> categories = new HashSet<String>();
+    private Set<String> choosenRecos = new HashSet<String>();
 
     public float getMinimumRatings() {
         return minimumRatings;
@@ -22,23 +22,19 @@ public class Preferences {
         this.minimumRatings = minimumRatings;
     }
 
-    public Map<String, Category> getCategories() {
+    public Set<String> getCategories() {
         return categories;
     }
 
-    public void setCategories(Map<String, Category> categories) {
+    public void setCategories(Set<String> categories) {
         this.categories = categories;
     }
 
-    public String getCategoriesAlias() {
-        String alias = "";
-        for (Iterator<Category> iterator = categories.values().iterator(); iterator.hasNext(); ) {
-            Category cat = iterator.next();
-            alias += cat.getAlias();
-            if (iterator.hasNext()) {
-                alias += ",";
-            }
-        }
-        return alias;
+    public Set<String> getChoosenRecos() {
+        return choosenRecos;
+    }
+
+    public void setChoosenRecos(Set<String> choosenRecos) {
+        this.choosenRecos = choosenRecos;
     }
 }
