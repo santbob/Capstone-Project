@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -51,6 +52,8 @@ import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
 import com.letmeeat.letmeeat.models.Preferences;
 import com.squareup.picasso.Picasso;
+
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private final String TAG = getClass().getSimpleName();
@@ -81,6 +84,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         FacebookSdk.sdkInitialize(getApplicationContext());
         fbCallbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_main);
@@ -183,6 +187,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         if (user != null) {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+            logUser(user);
             if (user.getPhotoUrl() != null) {
                 Picasso.with(MainActivity.this).load(user.getPhotoUrl())
                         .resize(200, 200)
@@ -203,6 +208,13 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
             loggedInStateLayout.setVisibility(View.GONE);
         }
     }
+
+    private void logUser(FirebaseUser user) {
+        Crashlytics.setUserIdentifier(user.getUid());
+        Crashlytics.setUserEmail(user.getEmail());
+        Crashlytics.setUserName(user.getDisplayName());
+    }
+
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
@@ -335,7 +347,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
             }
         } else {
-            if(Utils.isGPSEnabled(getApplicationContext())) {
+            if (Utils.isGPSEnabled(getApplicationContext())) {
                 locationHelper.getLocation(new LocationHelper.LocationHelperListener() {
                     @Override
                     public void onLocationIdentified(Location location) {

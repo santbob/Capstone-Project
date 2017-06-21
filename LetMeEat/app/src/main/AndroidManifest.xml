@@ -78,6 +78,9 @@
             android:authorities="com.letmeeat.letmeeat"
             android:exported="false" />
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="5fc462cc3033afba4562c148a39edbb7fc25c47b" />
     </application>
 
 </manifest>

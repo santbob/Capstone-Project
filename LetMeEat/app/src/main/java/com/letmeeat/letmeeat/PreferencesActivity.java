@@ -55,6 +55,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
     private FirebaseAuth.AuthStateListener authListener;
 
     private PreferencesHelper preferencesHelper;
+    private Preferences preferencesModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,8 +73,9 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         preferencesHelper = new PreferencesHelper(new PreferencesHelper.PreferencesListener() {
             @Override
             public void onPreferencesLoaded(Preferences preferences) {
+                preferencesModel = preferences;
                 hideProgressDialog();
-                updatePreferenceUI(preferences);
+                updatePreferenceUI();
             }
         });
 
@@ -94,8 +96,6 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         });
 
         selectedCuisinesLayout = (FlexboxLayout) findViewById(R.id.selected_cuisines);
-        getCategories();
-        loadStoredPreferences();
     }
 
     @Override
@@ -111,6 +111,13 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
             firebaseAuth.removeAuthStateListener(authListener);
         }
         hideProgressDialog();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getCategories();
+        loadStoredPreferences();
     }
 
     @Override
@@ -149,6 +156,7 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
                             android.R.layout.simple_dropdown_item_1line, autoCompleteCategoriesList);
                     autoCompleteTextView.setAdapter(adapter);
                     autoCompleteTextView.setThreshold(0);
+                    updatePreferenceUI();
                 }
             }
 
@@ -208,9 +216,9 @@ public class PreferencesActivity extends BaseActivity implements TagView.TagView
         preferencesHelper.readStoredPreferences(firebaseAuth.getCurrentUser() != null);
     }
 
-    private void updatePreferenceUI(Preferences preferencesModel) {
+    private void updatePreferenceUI() {
         if (preferencesModel != null) {
-            if (preferencesModel.getCategories() != null) {
+            if (preferencesModel.getCategories() != null && autoCompleteCategoriesList != null) {
                 String commaSeparatedCat = Utils.getCommaSeparatedStringOfSet(preferencesModel.getCategories());
                 for (Category category : autoCompleteCategoriesList) {
                     if (commaSeparatedCat.contains(category.getAlias())) {

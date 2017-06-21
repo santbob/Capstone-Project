@@ -15,3 +15,16 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-dontwarn okio.**
+-dontwarn com.squareup.okhttp.**
+-dontwarn javax.xml.stream**
+-dontwarn javax.lang.invoke**
+-dontwarn android.support.v4.**
+-keep public class com.google.android.gms.* { public *; }
+-dontwarn com.google.android.gms.**
+
+-dontwarn retrofit2.**
+-keep class retrofit2.**
+-keepattributes Signature
+-keepattributes Exceptions
