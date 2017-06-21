@@ -161,6 +161,7 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
 
         TextView name = (TextView) mRootView.findViewById(R.id.reco_name);
         ImageView image = (ImageView) mRootView.findViewById(R.id.reco_image);
+        image.setVisibility(View.GONE);
         TextView priceRange = (TextView) mRootView.findViewById(R.id.price_range);
         TextView reviewsCount = (TextView) mRootView.findViewById(R.id.reviews_count);
         ImageView ratingStar1 = (ImageView) mRootView.findViewById(R.id.rating_star_1);
@@ -184,10 +185,6 @@ public class RecoDetailFragment extends Fragment implements LoaderManager.Loader
 
             String imageUrl = mCursor.getString(mCursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_IMAGE_URL));
             if (!TextUtils.isEmpty(imageUrl)) {
-                Picasso.with(getActivity()).load(imageUrl)
-                        .resize(200, 200)
-                        .centerCrop()
-                        .into(image);
                 updateMainPicture(imageUrl);
             }
 

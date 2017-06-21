@@ -3,40 +3,42 @@
 
     <ImageView
         android:id="@+id/reco_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/recommendation_image"
         android:paddingEnd="@dimen/small_pad"
         android:paddingStart="@dimen/small_pad"
         android:scaleType="fitCenter" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="0dp"
-        android:layout_height="120dp"
+        android:layout_height="match_parent"
         android:layout_margin="1dp"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:paddingBottom="@dimen/small_pad"
-        android:paddingEnd="@dimen/small_pad"
-        android:paddingStart="@dimen/small_pad"
+        android:paddingEnd="@dimen/x_small_pad"
+        android:paddingStart="@dimen/x_small_pad"
         android:paddingTop="@dimen/small_pad">
 
         <TextView
             android:id="@+id/reco_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/small_pad"
+            android:layout_marginBottom="@dimen/x_small_pad"
             android:minHeight="12dp"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
         <LinearLayout
+            android:id="@+id/rating_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/small_pad"
+            android:layout_below="@+id/reco_name"
+            android:layout_marginBottom="@dimen/x_small_pad"
             android:orientation="horizontal">
 
             <ImageView
@@ -95,7 +97,11 @@
             android:id="@+id/cuisine_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/rating_layout"
+            android:layout_marginBottom="@dimen/x_small_pad"
+            android:ellipsize="end"
             android:gravity="start"
+            android:maxLines="1"
             android:textColor="@color/black"
             android:textSize="12sp" />
 
@@ -103,52 +109,62 @@
             android:id="@+id/address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/actions_layout"
+            android:layout_marginBottom="@dimen/x_small_pad"
+            android:ellipsize="end"
             android:minHeight="12dp"
             android:textColor="@color/black"
             android:textSize="12sp" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/actions_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="@dimen/x_small_pad"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/price_range"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/price_range"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/medium_pad"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/phone"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
-            android:contentDescription="@string/open_number_on_phone"
-            android:paddingBottom="@dimen/small_pad"
-            android:paddingTop="@dimen/small_pad"
-            android:src="@drawable/ic_phone" />
+            <ImageView
+                android:id="@+id/phone"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/medium_pad"
+                android:layout_marginStart="@dimen/medium_pad"
+                android:contentDescription="@string/open_number_on_phone"
+                android:src="@drawable/ic_phone" />
 
-        <ImageView
-            android:id="@+id/link"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
-            android:contentDescription="@string/opens_link"
-            android:paddingBottom="@dimen/small_pad"
-            android:paddingTop="@dimen/small_pad"
-            android:src="@drawable/ic_link_variant" />
+            <ImageView
+                android:id="@+id/link"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/medium_pad"
+                android:layout_marginStart="@dimen/medium_pad"
+                android:contentDescription="@string/opens_link"
+                android:src="@drawable/ic_link_variant" />
 
-        <ImageView
-            android:id="@+id/directions"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
-            android:contentDescription="@string/get_directions"
-            android:paddingBottom="@dimen/small_pad"
-            android:paddingTop="@dimen/small_pad"
-            android:src="@drawable/ic_directions" />
+            <ImageView
+                android:id="@+id/directions"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/medium_pad"
+                android:layout_marginStart="@dimen/medium_pad"
+                android:contentDescription="@string/get_directions"
+                android:src="@drawable/ic_directions" />
 
-    </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
 </merge>
