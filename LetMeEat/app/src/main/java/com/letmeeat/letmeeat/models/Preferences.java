@@ -1,5 +1,7 @@
 package com.letmeeat.letmeeat.models;
 
+import android.support.annotation.Keep;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,7 +9,7 @@ import java.util.Set;
  * Created by santhosh on 23/10/2016.
  * Preferences model, containg pref like cuisine, minimum ratings and anything else.
  */
-
+@Keep
 public class Preferences {
 
     private float minimumRatings;

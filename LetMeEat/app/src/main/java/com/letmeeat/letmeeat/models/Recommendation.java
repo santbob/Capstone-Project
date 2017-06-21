@@ -1,12 +1,14 @@
 package com.letmeeat.letmeeat.models;
 
+import android.support.annotation.Keep;
+
 import java.util.List;
 
 /**
  * Created by santhosh on 18/10/2016.
  * Model class for the Recommendation
  */
-
+@Keep
 public class Recommendation {
     private String id;
     private String name;

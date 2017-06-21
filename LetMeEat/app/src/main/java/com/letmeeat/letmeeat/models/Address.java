@@ -1,12 +1,13 @@
 package com.letmeeat.letmeeat.models;
 
+import android.support.annotation.Keep;
 import android.text.TextUtils;
 
 /**
  * Created by santhosh on 18/10/2016.
  * Model class which holds the physical address of the Restaurants/Establishments
  */
-
+@Keep
 public class Address {
 
     private static final String SPACE = " ";

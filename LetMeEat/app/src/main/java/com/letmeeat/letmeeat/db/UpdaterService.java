@@ -35,14 +35,12 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 public class UpdaterService extends IntentService {
     private static final String TAG = "UpdaterService";
 
-    private static final String BROADCAST_ACTION_STATE_CHANGE
-            = "com.letmeeat.letmeeat.intent.action.STATE_CHANGE";
-    private static final String EXTRA_REFRESHING
-            = "com.letmeeat.letmeeat.intent.extra.REFRESHING";
-
     public UpdaterService() {
         super(TAG);
     }
+
+    private static final int REC0_RADIUS_IN_METERS = 8047; // approx 5 miles
+    private static final int NO_OF_RECOS = 5; //max 5 recommendations
 
     private ApiService apiService;
     // Don't even inspect the intent, we only do one thing, and that's fetch content.
@@ -60,8 +58,6 @@ public class UpdaterService extends IntentService {
             return;
         }
 
-        sendStickyBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, true));
-
         // Delete all items
         cpo.add(ContentProviderOperation.newDelete(dirUri).build());
 
@@ -78,8 +74,8 @@ public class UpdaterService extends IntentService {
     private void getRecommendations() {
         RecoRequest recoRequest = new RecoRequest();
         recoRequest.setLocation(Utils.getSharedPrefString(getApplicationContext(), Utils.LOCATION));
-        recoRequest.setRadius(8047);
-        recoRequest.setLimit(4);
+        recoRequest.setRadius(REC0_RADIUS_IN_METERS);
+        recoRequest.setLimit(NO_OF_RECOS);
         recoRequest.setCategories(Utils.getCommaSeparatedStringOfSet(Utils.getSharedPrefStringSet(getApplicationContext(), Utils.CATEGORIES)));
         recoRequest.setMinRating(Utils.getSharedPrefFloat(getApplicationContext(), Utils.MIN_RATINGS));
         recoRequest.setIgnore(Utils.getCommaSeparatedStringOfSet(Utils.getSharedPrefStringSet(getApplicationContext(), Utils.RECOS_CHOOSEN_IN_PAST)));
@@ -90,7 +86,7 @@ public class UpdaterService extends IntentService {
 
             @Override
             public void onResponse(Call<List<Recommendation>> call, Response<List<Recommendation>> response) {
-                if (response.body() != null && response.body().size() > 0) {
+                if (response != null && response.body() != null && response.body().size() > 0) {
                     List<Recommendation> recommendations = response.body();
                     Gson gson = new Gson();
                     if (recommendations != null && recommendations.size() > 0) {
@@ -128,13 +124,11 @@ public class UpdaterService extends IntentService {
                         }
                     }
                 }
-                sendStickyBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
             }
 
             @Override
             public void onFailure(Call<List<Recommendation>> call, Throwable t) {
                 Log.d(TAG, t.toString());
-                sendStickyBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
             }
         });
     }

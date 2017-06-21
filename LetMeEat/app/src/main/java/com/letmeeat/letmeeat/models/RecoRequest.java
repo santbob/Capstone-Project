@@ -1,10 +1,12 @@
 package com.letmeeat.letmeeat.models;
 
+import android.support.annotation.Keep;
+
 /**
  * Created by santhosh on 27/05/2017.
  * The Request body of the places request
  */
-
+@Keep
 public class RecoRequest {
 
     private String location;
