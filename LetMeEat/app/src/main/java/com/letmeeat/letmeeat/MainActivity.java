@@ -17,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,7 +61,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     private final static int REQUEST_APP_SETTINGS_FOR_LOCATION = 10;
     private final static int REQUEST_CODE_ASK_PERMISSIONS = 20;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recomendationsListView;
     private LinearLayout noRecommendationsLayout;
     private FirebaseAuth firebaseAuth;
@@ -136,15 +134,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
             }
         });
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //refresh();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
         recomendationsListView = (RecyclerView) findViewById(R.id.reco_list_view);
         recomendationsListView.setHasFixedSize(true);
         recomendationsListView.setLayoutManager(new LinearLayoutManager(this));
@@ -207,7 +196,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     };
 
     private void updateRefreshingUI() {
-        swipeRefreshLayout.setRefreshing(mIsRefreshing);
+        // swipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
     private void handleLoginState(FirebaseAuth fbaseAuth) {
@@ -259,15 +248,15 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     }
 
     private void refresh() {
+        showProgressDialog(getString(R.string.loading_recos), getString(R.string.hold_on_apetite));
         recomendationsListView.setAdapter(null);
         getLocation();
     }
 
     private void showNoRecommendation() {
-        Log.d("Santhosh", "showNoRecommendation called");
-//        recomendationsListView.setAdapter(null);
-//        recomendationsListView.setVisibility(View.GONE);
-//        noRecommendationsLayout.setVisibility(View.VISIBLE);
+        recomendationsListView.setAdapter(null);
+        recomendationsListView.setVisibility(View.GONE);
+        noRecommendationsLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -311,6 +300,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        hideProgressDialog();
         final RecosAdapter adapter = new RecosAdapter(this, cursor, new RecosAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(long itemId) {
@@ -332,6 +322,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         recomendationsListView.setAdapter(null);
+        hideProgressDialog();
     }
 
 

@@ -47,5 +47,7 @@
     <string name="no">No</string>
     <string name="choose">Choose this restaurant</string>
     <string name="reco_ignored">"%1$s" will not show up in your recommendation for next %2$d days</string>
+    <string name="loading_recos">Fresh Recommendations on the way</string>
+    <string name="hold_on_apetite">Hold on to your apetite</string>
 
 </resources>
