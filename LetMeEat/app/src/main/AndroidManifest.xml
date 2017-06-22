@@ -81,6 +81,21 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="5fc462cc3033afba4562c148a39edbb7fc25c47b" />
+
+        <receiver android:name=".widgets.RecosWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/let_me_eat_widget_info" />
+        </receiver>
+        <service
+            android:name=".widgets.WidgetRemoteViewsService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

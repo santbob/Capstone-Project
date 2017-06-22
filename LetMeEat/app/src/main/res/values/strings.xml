@@ -16,7 +16,7 @@
     <string name="save_preferences">Save Preferences</string>
     <string name="processing">Processing</string>
     <string name="please_wait">Please wait</string>
-    <string name="no_recommendations">We don\'t have recommendations at this time, please check again later</string>
+    <string name="no_recommendations">Apologies, we don\'t have recommendations at this time.</string>
     <string name="static_map_url">https://maps.googleapis.com/maps/api/staticmap?center=%1$s&amp;zoom=13&amp;size=%3$dx%4$d&amp;maptype=roadmap&amp;markers=color:red|%2$s</string>
     <string name="map_intent_url">geo:0,0?q=%1$s</string>
     <string name="recommendation_image">Picture of Food</string>
@@ -24,7 +24,7 @@
     <string name="more_details">More Details&#8230;</string>
     <string name="back_to_main">Back to Main Screen</string>
     <string name="delete">Delete</string>
-    <string name="float_placeholder"><xliff:g id="" example="3.5">%1$.1f</xliff:g></string>
+    <string name="float_placeholder"><xliff:g example="3.5" id="">%1$.1f</xliff:g></string>
     <string name="opens_link">Opens link</string>
     <string name="open_number_on_phone">Dials the number in the Phone App, hit call after that</string>
     <string name="error">Error</string>
@@ -44,5 +44,7 @@
     <string name="reco_ignored">"%1$s" will not show up in your recommendation for next %2$d days</string>
     <string name="loading_recos">Fresh Recommendations on the way</string>
     <string name="hold_on_apetite">Hold on to your apetite</string>
+    <string name="appwidget_text">LetMeEat</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>
