@@ -50,7 +50,6 @@ import com.letmeeat.letmeeat.helpers.LocationHelper;
 import com.letmeeat.letmeeat.helpers.PreferencesHelper;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.loaders.RecosLoader;
-import com.letmeeat.letmeeat.models.Preferences;
 import com.squareup.picasso.Picasso;
 
 import io.fabric.sdk.android.Fabric;
@@ -150,12 +149,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         }
         handleLoginState(firebaseAuth);
 
-        preferencesHelper = new PreferencesHelper(new PreferencesHelper.PreferencesListener() {
-            @Override
-            public void onPreferencesLoaded(Preferences preferences) {
-
-            }
-        });
+        preferencesHelper = new PreferencesHelper(null);
     }
 
 
@@ -239,7 +233,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     }
 
     private void refresh() {
-        showProgressDialog(getString(R.string.loading_recos), getString(R.string.hold_on_apetite));
         recomendationsListView.setAdapter(null);
         getLocation();
     }
@@ -341,18 +334,20 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
             hasLocationPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
         }
         if (hasLocationPermission != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 handleNoLocationPermissionDialog(R.string.location_permission_denied_permanently);
             } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
             }
         } else {
+            destroyPermissionConfirmDialog();
             if (Utils.isGPSEnabled(getApplicationContext())) {
                 locationHelper.getLocation(new LocationHelper.LocationHelperListener() {
                     @Override
                     public void onLocationIdentified(Location location) {
                         if (location != null) {
                             Utils.setSharedPrefString(getApplicationContext(), Utils.LOCATION, (location.getLatitude() + "," + location.getLongitude()));
+                            showProgressDialog(getString(R.string.loading_recos), getString(R.string.hold_on_apetite));
                             startService(new Intent(MainActivity.this, UpdaterService.class));
                         }
                     }
@@ -411,8 +406,6 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         Intent viewIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         if (viewIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(viewIntent, REQUEST_APP_SETTINGS_FOR_LOCATION);
-        } else {
-            new AlertDialog.Builder(MainActivity.this).setMessage(R.string.location_permission_denied_gps_off).setTitle(R.string.error).create().show();
         }
     }
 }
