@@ -1,6 +1,8 @@
 package com.letmeeat.letmeeat.db;
 
 import android.app.IntentService;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -13,10 +15,12 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.letmeeat.letmeeat.R;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.models.RecoRequest;
 import com.letmeeat.letmeeat.models.Recommendation;
 import com.letmeeat.letmeeat.service.ApiService;
+import com.letmeeat.letmeeat.widgets.RecosWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +125,13 @@ public class UpdaterService extends IntentService {
                             getContentResolver().applyBatch(RecosContract.CONTENT_AUTHORITY, cpo);
                         } catch (RemoteException | OperationApplicationException e) {
                             //do nothing
+                        } finally {
+                            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(UpdaterService.this);
+                            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(UpdaterService.this, RecosWidgetProvider.class));
+                            //Trigger data update to handle the GridView widgets and force a data refresh
+                            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_item);
+                            //Now update all widgets
+                            RecosWidgetProvider.updateWidgets(UpdaterService.this, appWidgetManager, appWidgetIds);
                         }
                     }
                 }

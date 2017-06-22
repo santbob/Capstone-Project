@@ -3,6 +3,7 @@ package com.letmeeat.letmeeat.widgets;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Binder;
+import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -112,7 +113,11 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
                     views.setInt(R.id.widget_list_item, "setBackgroundResource", R.color.white);
                 }
 
-                final Intent fillInIntent = new Intent();
+                // Fill in the onClick PendingIntent Template using the specific plant Id for each item individually
+                Bundle extras = new Bundle();
+                extras.putLong(RecosContract.RecosEntry._ID, cursor.getLong(cursor.getColumnIndex(RecosContract.RecosEntry._ID)));
+                Intent fillInIntent = new Intent();
+                fillInIntent.putExtras(extras);
                 views.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
                 return views;
             }

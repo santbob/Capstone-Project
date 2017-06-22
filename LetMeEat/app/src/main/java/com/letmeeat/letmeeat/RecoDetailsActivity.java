@@ -97,8 +97,12 @@ public class RecoDetailsActivity extends BaseActivity implements LoaderManager.L
         }
 
         if (savedInstanceState == null) {
-            if (getIntent() != null && getIntent().getData() != null) {
-                mStartId = RecosContract.RecosEntry.getItemId(getIntent().getData());
+            if (getIntent() != null) {
+                if (getIntent().getData() != null) {
+                    mStartId = RecosContract.RecosEntry.getItemId(getIntent().getData());
+                } else if (getIntent().getLongExtra(RecosContract.RecosEntry._ID, -1) > -1) {
+                    mStartId = getIntent().getLongExtra(RecosContract.RecosEntry._ID, -1);
+                }
             }
         }
     }
