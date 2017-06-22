@@ -16,10 +16,10 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.letmeeat.letmeeat.R;
+import com.letmeeat.letmeeat.api.ApiService;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.models.RecoRequest;
 import com.letmeeat.letmeeat.models.Recommendation;
-import com.letmeeat.letmeeat.service.ApiService;
 import com.letmeeat.letmeeat.widgets.RecosWidgetProvider;
 
 import java.util.ArrayList;
@@ -126,12 +126,17 @@ public class UpdaterService extends IntentService {
                         } catch (RemoteException | OperationApplicationException e) {
                             //do nothing
                         } finally {
+                            //update the widget
                             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(UpdaterService.this);
                             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(UpdaterService.this, RecosWidgetProvider.class));
-                            //Trigger data update to handle the GridView widgets and force a data refresh
-                            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_item);
-                            //Now update all widgets
-                            RecosWidgetProvider.updateWidgets(UpdaterService.this, appWidgetManager, appWidgetIds);
+                            //if there are appwidgets, notifiy them its updated.
+                            if (appWidgetIds != null && appWidgetIds.length > 0) {
+                                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_reco_list_view);
+                                Intent intent = new Intent(UpdaterService.this, RecosWidgetProvider.class);
+                                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+                                sendBroadcast(intent);
+                            }
                         }
                     }
                 }

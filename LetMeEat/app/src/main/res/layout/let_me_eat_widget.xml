@@ -32,7 +32,7 @@
         android:background="#fff">
 
         <ListView
-            android:id="@+id/widget_list"
+            android:id="@+id/widget_reco_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"
@@ -40,13 +40,13 @@
             tools:listitem="@layout/widget_reco_list_item" />
 
         <TextView
-            android:id="@+id/widget_empty"
+            android:id="@+id/widget_no_recommendation_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fontFamily="sans-serif-condensed"
             android:gravity="center"
             android:text="@string/no_recommendations"
-            android:textAppearance="?android:textAppearanceLarge" />
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@color/dark_grey" />
     </FrameLayout>
 
 </LinearLayout>

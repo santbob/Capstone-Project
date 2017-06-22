@@ -1,4 +1,4 @@
-package com.letmeeat.letmeeat.service;
+package com.letmeeat.letmeeat.api;
 
 import com.letmeeat.letmeeat.models.Category;
 import com.letmeeat.letmeeat.models.RecoRequest;

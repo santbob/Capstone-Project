@@ -20,7 +20,7 @@ import com.letmeeat.letmeeat.helpers.PreferencesHelper;
 import com.letmeeat.letmeeat.helpers.Utils;
 import com.letmeeat.letmeeat.models.Category;
 import com.letmeeat.letmeeat.models.Preferences;
-import com.letmeeat.letmeeat.service.ApiService;
+import com.letmeeat.letmeeat.api.ApiService;
 import com.letmeeat.letmeeat.views.TagView;
 
 import java.util.HashSet;

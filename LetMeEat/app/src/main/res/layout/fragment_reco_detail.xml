@@ -64,12 +64,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_alignParentBottom="true"
-                    android:gravity="center_horizontal"
                     android:background="@drawable/border"
                     android:baselineAligned="false"
                     android:descendantFocusability="blocksDescendants"
                     android:elevation="4dp"
-                    android:orientation="horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/x_small_pad"
+                    android:paddingEnd="@dimen/medium_pad"
+                    android:paddingStart="@dimen/medium_pad"
+                    android:paddingTop="@dimen/x_small_pad">
 
                     <include layout="@layout/reco_badge" />
                 </LinearLayout>

@@ -4,10 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="90dp"
     android:layout_marginBottom="@dimen/medium_pad"
-    android:padding="@dimen/small_pad"
     android:baselineAligned="false"
     android:descendantFocusability="blocksDescendants"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/small_pad"
+    android:paddingEnd="@dimen/medium_pad"
+    android:paddingStart="@dimen/medium_pad"
+    android:paddingTop="@dimen/small_pad">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,15 +26,6 @@
             android:minHeight="12dp"
             android:textColor="@color/black"
             android:textSize="14sp" />
-
-        <ImageView
-            android:id="@+id/going_here"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="@dimen/x_small_pad"
-            android:layout_marginTop="@dimen/x_small_pad"
-            android:contentDescription="@string/choose"
-            android:src="@drawable/ic_satisfied" />
     </LinearLayout>
 
     <LinearLayout
@@ -109,6 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/x_small_pad"
         android:ellipsize="end"
+        android:maxLines="1"
         android:minHeight="12dp"
         android:textColor="@color/black"
         android:textSize="12sp" />

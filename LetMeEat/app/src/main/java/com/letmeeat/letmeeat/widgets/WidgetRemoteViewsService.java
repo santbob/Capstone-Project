@@ -70,7 +70,6 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
                 }
 
                 String recoName = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_NAME));
-                String imageUrl = cursor.getString(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_IMAGE_URL));
                 String reviewCount = getString(R.string.reviews_count, cursor.getInt(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_REVIEWS_COUNT)));
                 float ratings = cursor.getFloat(cursor.getColumnIndex(RecosContract.RecosEntry.COLUMN_RATINGS));
 
