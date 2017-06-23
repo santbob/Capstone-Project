@@ -46,5 +46,6 @@
     <string name="hold_on_apetite">Hold on to your apetite</string>
     <string name="appwidget_text">LetMeEat</string>
     <string name="add_widget">Add widget</string>
+    <string name="auth_failed">Authentication failed.</string>
 
 </resources>
